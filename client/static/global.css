@@ -1,6 +1,10 @@
 :root {
-	--color-primary: #590;
-	--color-background: white;
+	--color-dark: #181D31;
+	--color-primary: #678983;
+	--color-lighter: #F0E9D2;
+	--color-light: #E6DDC4;
+	--color-text: var(--color-dark);
+	--color-background: var(--color-lighter);
 }
 
 *, *::before, ::after {
@@ -12,4 +16,40 @@ html, body {
 	font-size: 16px;
 	margin: 0;
 	padding: 0;
+	min-height: 100vh;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background-color: var(--color-background);
+	color: var(--color-text);
+}
+
+input,
+button {
+	border-radius: .25rem;
+	margin: .25rem 0;
+	padding: .5rem;
+}
+
+input {
+	width: 100%;
+	border: 1px solid grey;
+	background-color: var(--color-light);
+}
+
+button {
+	border: none;
+	color: var(--color-lighter);
+	background-color: var(--color-primary);
+}
+
+h1, h2, h3, h4 {
+	margin: 0;
+}
+
+label {
+	display: block;
 }
