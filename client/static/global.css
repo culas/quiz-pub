@@ -3,8 +3,10 @@
 	--color-primary: #678983;
 	--color-lighter: #F0E9D2;
 	--color-light: #E6DDC4;
+	--color-white: white;
 	--color-text: var(--color-dark);
 	--color-background: var(--color-lighter);
+	--box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
 }
 
 *, *::before, ::after {
@@ -30,20 +32,28 @@ body {
 input,
 button {
 	border-radius: .25rem;
-	margin: .25rem 0;
 	padding: .5rem;
 }
 
 input {
 	width: 100%;
-	border: 1px solid grey;
-	background-color: var(--color-light);
+	margin-bottom: 1rem;
+	border: 2px solid var(--color-light);
+	background-color: var(--color-white);
 }
 
 button {
 	border: none;
 	color: var(--color-lighter);
 	background-color: var(--color-primary);
+	text-transform: uppercase;
+	cursor: pointer;
+	margin: 0;
+}
+
+button:hover,
+button:active {
+	background-color: var(--color-dark);
 }
 
 h1, h2, h3, h4 {
