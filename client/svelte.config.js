@@ -6,8 +6,10 @@ const config = {
 	preprocess: preprocess(),
 	kit: {
 		adapter: adapter({
-			precompress: true
-		})
+			precompress: true,
+			fallback: 'index.html'
+		}),
+		prerender: { entries: [] }
 	}
 };
 

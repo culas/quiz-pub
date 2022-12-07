@@ -19,6 +19,9 @@ function reqHandler(req: Request) {
     }
     return response;
   }
+  if (url.pathname.match(/\.(js|css|png)$/)) {
+    return serveFile(req, `${Deno.cwd()}/${appDistDir}/${url.pathname}`);
+  }
   return serveFile(req, `${Deno.cwd()}/${appDistDir}/index.html`);
 }
 
