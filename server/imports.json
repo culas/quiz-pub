@@ -1,8 +1,8 @@
 {
   "imports": {
-    "asserts": "https://deno.land/std@0.167.0/testing/asserts.ts",
-    "serve": "https://deno.land/std@0.167.0/http/mod.ts",
-    "serveFile": "https://deno.land/std@0.167.0/http/file_server.ts",
-    "parse": "https://deno.land/std@0.167.0/flags/mod.ts"
+    "asserts": "https://deno.land/std@0.152.0/testing/asserts.ts",
+    "serve": "https://deno.land/std@0.152.0/http/mod.ts",
+    "serveFile": "https://deno.land/std@0.152.0/http/file_server.ts",
+    "parse": "https://deno.land/std@0.152.0/flags/mod.ts"
   }
 }
