@@ -50,14 +50,14 @@
 		<label>
 			<h2>Round</h2>
 			<input type="text" bind:value={round.name} />
-			<button on:click={() => removeRound(rIdx)}>delete round</button>
+			<button class="warn" on:click={() => removeRound(rIdx)}>delete round</button>
 		</label>
 
 		{#each round.questions as question, qIdx}
 			<label>
 				<h3>Q{qIdx + 1}</h3>
 				<input type="text" bind:value={question} />
-				<button on:click={() => removeQuestion(rIdx, qIdx)}>delete question</button>
+				<button class="warn" on:click={() => removeQuestion(rIdx, qIdx)}>delete question</button>
 			</label>
 		{/each}
 		<button on:click={() => addQuestion(rIdx)}>add question</button>

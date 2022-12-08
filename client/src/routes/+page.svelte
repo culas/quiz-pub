@@ -27,7 +27,7 @@
 	$: showDeleted = false;
 </script>
 
-<h1>QuizPub</h1>
+<h1>Quiz Saves</h1>
 
 {#each $saves.filter((s) => !s.deleted || showDeleted) as save}
 	<section>
@@ -37,12 +37,12 @@
 		<p>Last save: {new Date(save.date).toLocaleString()}</p>
 		<a class="button" href="{save.id}/edit">Edit</a>
 		{#if save.deleted}
-			<button on:click={() => restoreQuiz(save.id)}>Restore</button>
+			<button on:click={() => restoreQuiz(save.id)}>restore</button>
 		{:else}
-			<button on:click={() => deleteQuiz(save.id)}>Delete</button>
+			<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
 		{/if}
 	</section>
 {/each}
 
-<button on:click={createNewQuiz}>Create new quiz</button>
+<button on:click={createNewQuiz}>create new quiz</button>
 <button on:click={() => (showDeleted = !showDeleted)}>{showDeleted ? 'hide' : 'show'} deleted</button>

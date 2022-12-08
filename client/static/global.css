@@ -4,6 +4,7 @@
 	--color-lighter: #F0E9D2;
 	--color-light: #E6DDC4;
 	--color-white: white;
+	--color-warning: #D9534F;
 	--color-text: var(--color-dark);
 	--color-background: var(--color-lighter);
 	--box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
@@ -27,6 +28,7 @@ body {
 	align-items: stretch;
 	background-color: var(--color-background);
 	color: var(--color-text);
+	gap: 1rem;
 }
 
 input,
@@ -47,6 +49,7 @@ button,
 	display: inline-block;
 	text-decoration: none;
 	font-size: inherit;
+	font-weight: bold;
 	border: none;
 	color: var(--color-lighter);
 	background-color: var(--color-primary);
@@ -60,6 +63,10 @@ button:active,
 .button:hover,
 .button:active {
 	background-color: var(--color-dark);
+}
+
+.warn {
+	background-color: var(--color-warning);
 }
 
 h1, h2, h3, h4 {
