@@ -1,10 +1,10 @@
-<header>QuizPub, nav will be here</header>
+<header><a href="/">QuizPub</a></header>
 
 <main>
 	<slot />
 </main>
 
-<footer>Footer</footer>
+<footer>QuizPub prototype to create and run pub quiz style events, by celep for Fishcord</footer>
 
 <style>
 	main {
@@ -13,5 +13,21 @@
 		width: 50rem;
 		max-width: 100%;
 		padding: 0 2rem;
+	}
+
+	header,
+	footer {
+		padding: 0.5rem;
+		background-color: var(--color-light);
+	}
+
+	footer {
+		font-size: .75rem;
+	}
+
+	a {
+		color: var(--color-text);
+		text-decoration: none;
+		font-weight: bold;
 	}
 </style>
