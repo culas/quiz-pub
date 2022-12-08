@@ -5,7 +5,9 @@
 	$: quiz = $saves.find((save: QuizSave) => save.id === $page.params.code) ?? {
 		id: $page.params.code,
 		name: '',
-		rounds: []
+		rounds: [],
+		date: Date.now(),
+		deleted: false
 	};
 
 	function addRound() {
@@ -15,10 +17,11 @@
 	function addQuestion(rIdx: number) {
 		const round = quiz.rounds[rIdx];
 		round.questions = [...round.questions, ''];
-		quiz.rounds = quiz.rounds.map((r, i) => i === rIdx ? round : r);
+		quiz.rounds = quiz.rounds.map((r, i) => (i === rIdx ? round : r));
 	}
 
 	function save() {
+		quiz.date = Date.now();
 		$saves = [...$saves.filter((q) => q.id !== quiz.id), quiz];
 	}
 </script>
@@ -54,13 +57,3 @@
 </section>
 
 <button on:click={save}>Save</button>
-
-<style>
-	section {
-		background-color: var(--color-white);
-		padding: 1rem;
-		margin: 1rem 0;
-		border-radius: 0.5rem;
-		box-shadow: var(--box-shadow);
-	}
-</style>

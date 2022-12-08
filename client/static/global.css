@@ -30,7 +30,8 @@ body {
 }
 
 input,
-button {
+button,
+.button {
 	border-radius: .25rem;
 	padding: .5rem;
 }
@@ -42,7 +43,11 @@ input {
 	background-color: var(--color-white);
 }
 
-button {
+button,
+.button {
+	display: inline-block;
+	text-decoration: none;
+	font-size: inherit;
 	border: none;
 	color: var(--color-lighter);
 	background-color: var(--color-primary);
@@ -52,7 +57,9 @@ button {
 }
 
 button:hover,
-button:active {
+button:active,
+.button:hover,
+.button:active {
 	background-color: var(--color-dark);
 }
 
@@ -62,4 +69,16 @@ h1, h2, h3, h4 {
 
 label {
 	display: block;
+}
+
+section {
+	background-color: var(--color-white);
+	padding: 1rem;
+	margin: 1rem 0;
+	border-radius: 0.5rem;
+	box-shadow: var(--box-shadow);
+}
+
+p {
+	margin: 0;
 }
