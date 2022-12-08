@@ -35,7 +35,7 @@
 		<p>Rounds: {save.rounds.length}</p>
 		<p>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</p>
 		<p>Last save: {new Date(save.date).toLocaleString()}</p>
-		<a class="button" href="{save.id}/edit">Edit</a>
+		<a class="button" href="edit/{save.id}">Edit</a>
 		{#if save.deleted}
 			<button on:click={() => restoreQuiz(save.id)}>restore</button>
 		{:else}
