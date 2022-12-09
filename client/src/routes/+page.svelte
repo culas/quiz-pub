@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import type { QuizSave } from '$lib/models/quiz-save.model';
 	import { saves } from '$lib/stores/saves.store';
+	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
 
 	function createNewQuiz() {
@@ -25,6 +27,13 @@
 	}
 
 	$: showDeleted = false;
+
+	function runQuiz(save: QuizSave): any {
+		const code = getRunAdminCode(save.id);
+		if (code) {
+			goto(`run/${code}`);
+		}
+	}
 </script>
 
 <h1>Quiz Saves</h1>
@@ -39,6 +48,7 @@
 		{#if save.deleted}
 			<button on:click={() => restoreQuiz(save.id)}>restore</button>
 		{:else}
+			<button on:click={() => runQuiz(save)}>run</button>
 			<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
 		{/if}
 	</section>
