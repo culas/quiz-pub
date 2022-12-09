@@ -1,9 +1,5 @@
-import { writable, type Writable } from 'svelte/store';
-import type { QuizSave } from '../models/quiz-save.model';
+import type { QuizSave } from '$lib/models/quiz-save.model';
+import { writable } from 'svelte-local-storage-store';
+import type { Writable } from 'svelte/store';
 
-const lsKey = 'quizSaves';
-
-const initialValue = localStorage.getItem(lsKey);
-export const saves: Writable<QuizSave[]> = writable(initialValue ? JSON.parse(initialValue) : []);
-
-saves.subscribe(value => localStorage.setItem(lsKey, JSON.stringify(value)));
+export const saves: Writable<QuizSave[]> = writable('quizSaves', []);

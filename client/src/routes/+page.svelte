@@ -9,7 +9,7 @@
 			return;
 		}
 		$saves = [...$saves, { id: newId, name: '', rounds: [], date: Date.now(), deleted: false }];
-		goto(`${newId}/edit`);
+		goto(`edit/${newId}`);
 	}
 
 	function deleteQuiz(id: string) {
