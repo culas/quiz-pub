@@ -26,8 +26,7 @@ function reqHandler(req: Request) {
           console.log('creating session');
           sessions.set(joinCode, new QuizSession(adminCode, joinCode, socket));
         }
-      }
-      if (joinCode) {
+      } else if (joinCode) {
         console.log('connecting player');
         sessions.get(joinCode)?.addPlayer(socket);
       }
