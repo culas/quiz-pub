@@ -11,14 +11,25 @@ function reqHandler(req: Request) {
   if (req.headers.get('upgrade') === 'websocket') {
     const { socket, response } = Deno.upgradeWebSocket(req);
     try {
-      socket.onmessage = msg => {
-        if (msg.data.type === 'start-run') {
-          const { adminCode, joinCode, name } = msg.data;
-          sessions.set(msg.data.joinCode, new QuizSession(adminCode, joinCode, name, socket));
+      const joinCode = url.searchParams.get('joinCode');
+      const adminCode = url.searchParams.get('adminCode');
+      console.log('joinCode', joinCode, 'adminCode', adminCode);
+      if (adminCode && joinCode) {
+        console.log('connecting host');
+        if (sessions.has(joinCode)) {
+          const session = sessions.get(joinCode);
+          if (session?.adminCode === adminCode) {
+            console.log('looks like a reconnect from the host');
+            session.addHost(socket);
+          }
+        } else {
+          console.log('creating session');
+          sessions.set(joinCode, new QuizSession(adminCode, joinCode, socket));
         }
-        if (msg.data.type === 'join') {
-          sessions.get(msg.data.joinCode)?.addPlayer(socket, msg.data.name);
-        }
+      }
+      if (joinCode) {
+        console.log('connecting player');
+        sessions.get(joinCode)?.addPlayer(socket);
       }
     } catch (error: any) {
       return new Response(error?.message, { status: 400 });
