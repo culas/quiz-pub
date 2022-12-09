@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import type { QuizSave } from '$lib/models/quiz-save.model';
+	import { runCodes, runs } from '$lib/stores/runs.store';
 	import { saves } from '$lib/stores/saves.store';
+	import { createRunQuiz } from '$lib/utils/create-run-quiz';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
+	import { writable } from 'svelte-local-storage-store';
 
 	function createNewQuiz() {
 		const newId: string = randomId(5);
@@ -27,14 +31,32 @@
 	}
 
 	$: showDeleted = false;
+	$: showFinished = false;
 
 	function runQuiz(save: QuizSave): any {
 		const code = getRunAdminCode(save.id);
 		if (code) {
+			$runCodes = [...$runCodes, code];
+			writable<QuizRun | undefined>(code, undefined).set(createRunQuiz(save, code));
 			goto(`run/${code}`);
 		}
 	}
 </script>
+
+<h1>Quiz Runs</h1>
+
+{#each $runs.filter((r) => r.state !== 'finished' || showFinished) as quiz}
+	<section>
+		<h2>{quiz.name}</h2>
+		<p>State: {quiz.state}</p>
+		<p>Players: {quiz.players.length}</p>
+		<p>Join Code: <b>{quiz.joinCode}</b></p>
+		<a class="button" href="run/{quiz.adminCode}">Open</a>
+	</section>
+{/each}
+<button on:click={() => (showFinished = !showFinished)}
+	>{showFinished ? 'hide' : 'show'} finished</button
+>
 
 <h1>Quiz Saves</h1>
 
@@ -55,4 +77,6 @@
 {/each}
 
 <button on:click={createNewQuiz}>create new quiz</button>
-<button on:click={() => (showDeleted = !showDeleted)}>{showDeleted ? 'hide' : 'show'} deleted</button>
+<button on:click={() => (showDeleted = !showDeleted)}
+	>{showDeleted ? 'hide' : 'show'} deleted</button
+>
