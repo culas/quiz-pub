@@ -3,7 +3,7 @@
 
 	import { page } from '$app/stores';
 	import type { QuizInfo, SocketMessage } from '$lib/models/messages';
-	import type { QuizRun } from '$lib/models/quiz-run.model';
+	import type { QuizRun, RunningRound } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
 	import { writable } from 'svelte-local-storage-store';
 	const run = writable($page.params.code, {} as QuizRun);
@@ -57,15 +57,19 @@
 				state: 'answering',
 				currentRound: $run.currentRound + 1
 			};
-			const round = $run.rounds[$run.currentRound];
-			$socket = {
-				type: 'start-round',
-				name: round.name,
-				questions: round.questions.map((q) => q.text)
-			};
+			sendRoundStart($run.rounds[$run.currentRound]);
 		} else {
 			$run = { ...$run, state: 'finished' };
 		}
+	}
+
+	//$: sendRoundStart(currentRound);
+	function sendRoundStart(round: RunningRound) {
+		$socket = {
+			type: 'start-round',
+			name: round.name,
+			questions: round.questions.map((q) => q.text)
+		};
 	}
 
 	function score(question: number, player: string, points: number) {
