@@ -9,8 +9,8 @@ export function createRunQuiz(save: QuizSave, adminCode: string): QuizRun {
 		name: save.name,
 		rounds: save.rounds.map(round => ({ name: round.name, questions: round.questions.map(q => ({ text: q, answers: [] })) })),
 		quizDate: save.date,
-		currentRound: 0,
 		players: [],
-		state: 'preparation'
+		state: 'preparation',
+		currentRound: -1
 	}
 }

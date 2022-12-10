@@ -4,28 +4,28 @@ export interface QuizRun {
 	name: string;
 	rounds: RunningRound[];
 	quizDate: number;
-	currentRound: number;
 	players: Player[];
 	state: 'preparation' | 'answering' | 'revealing' | 'scoring' | 'finished';
+	currentRound: number;
 	finishedDate?: number;
 }
 
-interface Player {
+export interface Player {
 	name: string;
 	color: string;
 }
 
-interface RunningRound {
+export interface RunningRound {
 	name: string;
 	questions: Question[];
 }
 
-interface Question {
+export interface Question {
 	text: string;
 	answers: Answer[];
 }
 
-interface Answer {
+export interface Answer {
 	player: string;
 	answer: string;
 	score?: number;
