@@ -28,8 +28,10 @@ export class QuizSession {
 				this.name = data.name;
 				this.rounds = data.rounds;
 				this.questions = data.questions;
+				this.broadcast(this.getQuizInfo());
+			} else {
+				this.players.forEach(player => player.session.send(msg.data));
 			}
-			this.players.forEach(player => player.session.send(msg.data));
 		}
 	}
 
