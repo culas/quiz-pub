@@ -41,7 +41,17 @@
 			goto(`run/${code}`);
 		}
 	}
+
+	let joinCode = '';
 </script>
+
+<form on:submit|preventDefault={() => goto('play/' + joinCode)}>
+	<label>
+		Join Code
+		<input type="text" name="joinCode" bind:value={joinCode} />
+	</label>
+	<button type="submit" disabled={joinCode.length !== 6}>JOIN</button>
+</form>
 
 <h1>Quiz Runs</h1>
 
