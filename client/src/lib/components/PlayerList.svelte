@@ -6,9 +6,13 @@
 
 <div>
 	<b>Players:</b>
-	{#each players as p}
-		<span><i style="background-color: {p.color}" />{p.name}</span>
-	{/each}
+	{#if players && players.length > 0}
+		{#each players as p}
+			<span><i style="background-color: {p.color}" />{p.name}</span>
+		{/each}
+	{:else}
+		none
+	{/if}
 </div>
 
 <style>
