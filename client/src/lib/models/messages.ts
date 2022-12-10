@@ -15,16 +15,15 @@ export interface QuizInfo {
 	name: string;
 	rounds: number;
 	questions: number;
-	players: Omit<Player, 'type'>[];
+	players: { name: string, color: string }[];
 }
 
 // from server
-export type ServerMessage = Player;
+export type ServerMessage = Players;
 
-export interface Player {
-	type: 'player';
-	name: string;
-	color: string;
+export interface Players {
+	type: 'players';
+	players: { name: string, color: string }[];
 }
 
 // from host to players (via server ofc)

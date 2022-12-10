@@ -40,7 +40,7 @@ export class QuizSession {
 			const data = this.parse(msg);
 			if (data.type === 'join-quiz') {
 				player.name = data.name;
-				this.broadcast({ type: 'player', name: player.name, color: player.color });
+				this.broadcastPlayers();
 				socket.send(JSON.stringify(this.getQuizInfo()));
 			} else if (data.type === 'answers') {
 				this.host.send(msg.data);
@@ -48,7 +48,12 @@ export class QuizSession {
 		}
 		socket.onclose = () => {
 			this.players = this.players.filter(p => p.name !== player.name);
+			this.broadcastPlayers();
 		}
+	}
+
+	private broadcastPlayers() {
+		this.broadcast({ type: 'players', players: this.players.map(({ name, color }) => ({ name: name ?? 'noname', color })) });
 	}
 
 	private broadcast(msg: SocketMessage) {
@@ -58,7 +63,8 @@ export class QuizSession {
 	}
 
 	private getPlayerColor(): string {
-		const colors = ['#334400', '#885500', '#005599'];
+		const colors = ['#066163', '#2666CF', '#4E9F3D'];
+		console.log(this.players, colors, this.players.length % colors.length);
 		return colors[this.players.length % colors.length];
 	}
 

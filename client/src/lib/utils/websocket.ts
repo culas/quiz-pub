@@ -1,12 +1,18 @@
+import type { SocketMessage } from '$lib/models/messages';
 import websocketStore from '$lib/stores/websocket.store';
 
 let socket: WebSocket;
 
-function connectSocket() {
+export function connectSocket(params?: Map<string, string>) {
 	let { host, protocol } = window.location;
 	if (host.includes('localhost')) host = 'localhost:42069';
 	const webSocketURL = new URL(`${protocol === 'https:' ? 'wss' : 'ws'}://${host}`);
-	return websocketStore(webSocketURL);
+	if (params) {
+		params.forEach((val, key) => {
+			webSocketURL.searchParams.append(key, val);
+		})
+	}
+	return websocketStore<SocketMessage>(webSocketURL);
 }
 
 export const websocket = connectSocket();
