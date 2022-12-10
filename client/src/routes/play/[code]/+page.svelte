@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { QuizInfo, SocketMessage, StartRound } from '$lib/models/messages';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
@@ -57,11 +58,7 @@
 
 {#if state === 'preparation'}
 	<p>Waiting for players to join and the host to start the quiz</p>
-	<ul>
-		{#each quiz?.players ?? [] as p}
-			<li style="color: {p.color}">{p.name}</li>
-		{/each}
-	</ul>
+	<PlayerList players={quiz.players} />
 {/if}
 
 {#if state === 'answering'}

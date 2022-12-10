@@ -1,4 +1,6 @@
 <script lang="ts">
+	import PlayerList from '../../../lib/components/PlayerList.svelte';
+
 	import { page } from '$app/stores';
 	import type { QuizInfo, SocketMessage } from '$lib/models/messages';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
@@ -103,11 +105,7 @@
 
 {#if $run.state === 'preparation'}
 	<p>Waiting for players to join with code: <b>{$run.joinCode}</b></p>
-	<ul>
-		{#each $run.players as p}
-			<li style="color: {p.color}">{p.name}</li>
-		{/each}
-	</ul>
+	<PlayerList players={$run.players} />
 	<button on:click={() => nextRound()}>Start first round</button>
 {:else if $run.state === 'answering'}
 	<h2>Round: {currentRound.name}</h2>
