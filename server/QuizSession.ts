@@ -64,7 +64,6 @@ export class QuizSession {
 
 	private getPlayerColor(): string {
 		const colors = ['#066163', '#2666CF', '#4E9F3D'];
-		console.log(this.players, colors, this.players.length % colors.length);
 		return colors[this.players.length % colors.length];
 	}
 

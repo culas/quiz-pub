@@ -22,27 +22,29 @@
 	$: updateRun($socket);
 
 	function updateRun(msg: SocketMessage) {
-		if (msg.type === 'players') {
-			$run = { ...$run, players: msg.players };
-		}
-		if (msg.type === 'answers') {
-			$run = {
-				...$run,
-				rounds: $run.rounds.map((r, i) =>
-					i === $run.currentRound
-						? {
-								...r,
-								questions: r.questions.map((q, qi) => ({
-									...q,
-									answers: [...q.answers, { player: msg.player, answer: msg.answers[qi] }]
-								}))
-						  }
-						: r
-				)
-			};
-			if (currentRound.questions.every((q) => q.answers.length === $run.players.length)) {
-				$run = { ...$run, state: 'revealing' };
-			}
+		switch (msg.type) {
+			case 'players':
+				$run = { ...$run, players: msg.players };
+				break;
+			case 'answers':
+				$run = {
+					...$run,
+					rounds: $run.rounds.map((r, i) =>
+						i === $run.currentRound
+							? {
+									...r,
+									questions: r.questions.map((q, qi) => ({
+										...q,
+										answers: [...q.answers, { player: msg.player, answer: msg.answers[qi] }]
+									}))
+							  }
+							: r
+					)
+				};
+				if (currentRound.questions.every((q) => q.answers.length === $run.players.length)) {
+					$run = { ...$run, state: 'revealing' };
+				}
+				break;
 		}
 	}
 
@@ -52,6 +54,12 @@
 				...$run,
 				state: 'answering',
 				currentRound: $run.currentRound + 1
+			};
+			const round = $run.rounds[$run.currentRound];
+			$socket = {
+				type: 'start-round',
+				name: round.name,
+				questions: round.questions.map((q) => q.text)
 			};
 		} else {
 			$run = { ...$run, state: 'finished' };
