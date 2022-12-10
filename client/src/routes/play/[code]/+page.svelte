@@ -40,6 +40,12 @@
 				state = 'answering';
 				round = msg;
 				break;
+			case 'end-round':
+				state = 'revealing';
+				break;
+			case 'score-answer':
+				state = 'scoring';
+				break;
 		}
 	}
 </script>
