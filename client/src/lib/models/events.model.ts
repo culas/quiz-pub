@@ -1,13 +1,19 @@
-export type StateEvent = StartEvent | AnswerEvent | RevealEvent | ScoreEvent;
+export type StateEvent = JoinEvent | StartEvent | AnswerEvent | RevealEvent | ScoreEvent;
+
+export interface JoinEvent {
+	type: 'JOIN';
+	player: string;
+	color: string;
+}
+
+export interface StartEvent {
+	type: 'START';
+}
 
 export interface AnswerEvent {
 	type: 'ANSWER';
 	player: string;
 	answers: string[];
-}
-
-export interface StartEvent {
-	type: 'START';
 }
 
 export interface RevealEvent {

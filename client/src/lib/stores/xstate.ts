@@ -30,6 +30,7 @@ export const quizMachine = createMachine({
 	states: {
 		lobby: {
 			on: {
+				JOIN: { target: 'lobby', actions: 'send' },
 				START: [
 					{ target: 'round.answering', cond: 'quizReady', actions: 'send' },
 				]
