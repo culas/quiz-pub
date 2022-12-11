@@ -63,7 +63,8 @@ export function websocketStore<T>(url: URL): Omit<Writable<T>, 'update'> {
 			subscriptions.forEach(subscription => subscription(val));
 		};
 
-		socket.onclose = () => reopen();
+		// TODO: enable
+		//socket.onclose = () => reopen();
 
 		openPromise = new Promise((resolve, reject) => {
 			if (!socket) {

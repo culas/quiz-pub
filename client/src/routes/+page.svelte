@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { QuizRun } from '$lib/models/quiz-run.model';
+	import type { QuizState } from '$lib/models/messages';
 	import type { QuizSave } from '$lib/models/quiz-save.model';
 	import { runCodes, runs } from '$lib/stores/runs.store';
 	import { saves } from '$lib/stores/saves.store';
-	import { createRunQuiz } from '$lib/utils/create-run-quiz';
+	import { quizMachine } from '$lib/stores/xstate';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
 	import { writable } from 'svelte-local-storage-store';
@@ -37,12 +37,27 @@
 		const code = getRunAdminCode(save.id);
 		if (code) {
 			$runCodes = [...$runCodes, code];
-			writable<QuizRun | undefined>(code, undefined).set(createRunQuiz(save, code));
+			writable(code, {}).set(quizMachine().withContext(createQuizContext(save, code)).initialState);
 			goto(`run/${code}`);
 		}
 	}
 
 	let joinCode = '';
+
+	function createQuizContext(save: QuizSave, code: string): QuizState {
+		return {
+			name: save.name,
+			adminCode: code,
+			joinCode: randomId(6),
+			players: [],
+			rounds: save.rounds.map((r, i) => ({ text: r.name, id: i })),
+			questions: save.rounds.flatMap((r, ri) =>
+				r.questions.map((q, qi) => ({ text: q, id: qi, roundId: ri }))
+			),
+			answers: [],
+			currentRound: 0
+		};
+	}
 </script>
 
 <form on:submit|preventDefault={() => goto('play/' + joinCode)}>
@@ -55,10 +70,10 @@
 
 <h1>Quiz Runs</h1>
 
-{#each $runs.filter((r) => r.state !== 'finished' || showFinished) as quiz}
+{#each $runs.filter((r) => !r.done || showFinished).map((r) => r.context) as quiz}
 	<section>
 		<h2>{quiz.name}</h2>
-		<p>State: {quiz.state}</p>
+		<!-- <p>State: {quiz.state}</p> -->
 		<p>Players: {quiz.players.length}</p>
 		<p>Join Code: <b>{quiz.joinCode}</b></p>
 		<a class="button" href="run/{quiz.adminCode}">Open</a>

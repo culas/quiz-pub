@@ -1,150 +1,86 @@
 <script lang="ts">
-	import PlayerList from '../../../lib/components/PlayerList.svelte';
-
 	import { page } from '$app/stores';
+	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { StateEvent } from '$lib/models/events.model';
-	import type { QuizInfo, SocketMessage } from '$lib/models/messages';
-	import type { QuizRun, RunningRound } from '$lib/models/quiz-run.model';
+	import type { QuizState } from '$lib/models/messages';
+	import { quizMachine } from '$lib/stores/xstate';
 	import { connectSocket } from '$lib/utils/websocket';
 	import { writable } from 'svelte-local-storage-store';
-	const run = writable($page.params.code, {} as QuizRun);
+	import type { State } from 'xstate';
+	import { interpret } from 'xstate';
+
+	const state = writable($page.params.code, {} as State<QuizState, StateEvent>);
 
 	const socket = connectSocket(
 		new Map([
-			['joinCode', $run.joinCode],
-			['adminCode', $run.adminCode]
+			['joinCode', $state.context.joinCode],
+			['adminCode', $state.context.adminCode]
 		])
 	);
-	$socket = {
-		type: 'quiz-info',
-		name: $run.name,
-		rounds: $run.rounds.length,
-		questions: $run.rounds.reduce((sum, r) => sum + r.questions.length, 0)
-	} as QuizInfo;
 
-	$: updateRun($socket);
+	const qService = interpret(quizMachine(socket)).start($state);
+	$: cr = $qService.context.currentRound;
 
-	function updateRun(msg: SocketMessage | StateEvent) {
-		switch (msg.type) {
-			case 'players':
-				$run = { ...$run, players: msg.players };
-				break;
-			case 'answers':
-				$run = {
-					...$run,
-					rounds: $run.rounds.map((r, i) =>
-						i === $run.currentRound
-							? {
-									...r,
-									questions: r.questions.map((q, qi) => ({
-										...q,
-										answers: [...q.answers, { player: msg.player, answer: msg.answers[qi], revealed: false }]
-									}))
-							  }
-							: r
-					)
-				};
-				if (currentRound.questions.every((q) => q.answers.length === $run.players.length)) {
-					$run = { ...$run, state: 'revealing' };
-				}
-				break;
-		}
+	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
+		qService.send($socket);
 	}
-
-	function nextRound() {
-		if ($run.currentRound < $run.rounds.length - 1) {
-			$run = {
-				...$run,
-				state: 'answering',
-				currentRound: $run.currentRound + 1
-			};
-			sendRoundStart($run.rounds[$run.currentRound]);
-		} else {
-			$run = { ...$run, state: 'finished' };
-		}
-	}
-
-	//$: sendRoundStart(currentRound);
-	function sendRoundStart(round: RunningRound) {
-		$socket = {
-			type: 'start-round',
-			name: round.name,
-			questions: round.questions.map((q) => q.text)
-		};
-	}
-
-	function score(question: number, player: string, points: number) {
-		$run = {
-			...$run,
-			rounds: $run.rounds.map((r, i) =>
-				i === $run.currentRound
-					? {
-							...r,
-							questions: r.questions.map((q, qi) =>
-								qi === question
-									? {
-											...q,
-											answers: q.answers.map((a) =>
-												a.player === player ? { ...a, score: points } : a
-											)
-									  }
-									: q
-							)
-					  }
-					: r
-			)
-		};
-		if (currentRound.questions.every((q) => q.answers.every((a) => a.score))) {
-			nextRound();
-		}
-	}
-
-	function reveal(qIdx: number, player: string) {
-		console.warn('not yet implemented');
-	}
-
-	$: currentRound = $run.rounds[$run.currentRound];
 </script>
 
-<h1>Run Quiz «{$run.name}»</h1>
+<div>
+	{#if $qService.matches('lobby')}
+		<p>Invite players with code: <b>{$qService.context.joinCode}</b></p>
+		<PlayerList players={$qService.context.players} />
+		<button on:click={() => qService.send('START')}>start</button>
+	{:else if $qService.matches('round')}
+		<h2>{$qService.context.rounds[cr].text}</h2>
+		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
+			<p><b>Q{q.id + 1}: {q.text}</b></p>
+			{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
+				<div class="answer">
+					<span>{a.player}</span>
+					<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
+					<p>{a.revealed ? a.text : '*****'}</p>
+					{#if $qService.matches('round.revealing') && !a.revealed}
+						<button on:click={() => qService.send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
+							>reveal</button
+						>
+					{:else if $qService.matches('round.scoring')}
+						<button
+							on:click={() =>
+								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}>1</button
+						>
+						<button
+							on:click={() =>
+								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}>0</button
+						>
+					{/if}
+				</div>
+			{/each}
+		{/each}
+	{:else if $qService.matches('result')}
+		<h2>Scores</h2>
+		{#each $qService.context.players as player}
+			<p>
+				<b>{player.name}:</b>
+				{$qService.context.answers
+					.filter((a) => a.player === player.name)
+					.reduce((sum, a) => sum + (a.score ?? 0), 0)}
+			</p>
+		{/each}
+	{/if}
+</div>
 
-{#if $run.state === 'preparation'}
-	<p>Waiting for players to join with code: <b>{$run.joinCode}</b></p>
-	<PlayerList players={$run.players} />
-	<button on:click={() => nextRound()}>Start first round</button>
-{:else if $run.state === 'answering'}
-	<h2>Round: {currentRound.name}</h2>
-	{#each currentRound?.questions as q, qi}
-		<p>{q.text}</p>
-		<ul>
-			{#each q.answers as a}
-				<li>{a.player}</li>
-			{/each}
-		</ul>
-	{/each}
-{:else if $run.state === 'revealing'}
-	<p>Reveal answers</p>
-	<h2>Round: {currentRound.name}</h2>
-	{#each currentRound?.questions as q, qi}
-		<p>{q.text}</p>
-		<ul>
-			{#each q.answers as a}
-				<li>
-					{a.player}: {a.answer} <button on:click={() => reveal(qi, a.player)}>Reveal</button>
-				</li>
-			{/each}
-		</ul>
-	{/each}
-{:else if $run.state === 'scoring'}
-	<h2>Round: {currentRound.name}</h2>
-	{#each currentRound?.questions as q, qi}
-		<p>{q.text}</p>
-		<ul>
-			{#each q.answers as a}
-				<li>{a.player}: {a.answer} <button on:click={() => score(qi, a.player, 1)}>OK</button></li>
-			{/each}
-		</ul>
-	{/each}
-{:else if $run.state === 'finished'}
-	<p>Finish the quiz</p>
-{/if}
+<style>
+	.answer {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.answer p {
+		flex-grow: 1;
+	}
+
+	.answer button {
+		padding: 0 0.25rem;
+	}
+</style>
