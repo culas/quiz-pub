@@ -1,4 +1,16 @@
-export type SocketMessage = HostMessage | PlayerMessage | ServerMessage;
+export type SocketMessage = HostMessage | PlayerMessage | ServerMessage | QuizStateMessage | { type: 'any' };
+
+export type QuizStateMessage = { type: 'quiz-state' } & QuizState;
+
+export interface QuizState {
+	name: string;
+	players: { name: string, color: string }[];
+	rounds: { id: number, text: string }[];
+	questions: { roundId: number, id: number, text: string }[];
+	answers: { roundId: number, questionId: number, text: string, player: string, revealed: boolean, score?: number }[];
+	currentRound: number;
+}
+
 // from host to server
 export type HostMessage = QuizInfo | StartRound | EndRound | ScoreAnswer;
 

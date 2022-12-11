@@ -1,14 +1,13 @@
-import type { Answers } from '$lib/models/messages';
-import { assign, createMachine, interpret } from 'xstate';
+import type { Answers, QuizState } from '$lib/models/messages';
+import { connectSocket } from '$lib/utils/websocket';
+import { assign, createMachine, interpret, type EventObject } from 'xstate';
 
-interface QuizFlatterStructureDraft {
-	name: string;
-	players: { name: string, color: string }[];
-	rounds: { id: number, text: string }[];
-	questions: { roundId: number, id: number, text: string }[];
-	answers: { roundId: number, questionId: number, text: string, player: string, revealed: boolean, score?: number }[];
-	currentRound: number;
-}
+const socket = connectSocket(
+	new Map([
+		['joinCode', 'JLAAHU'],
+		['adminCode', 'RYKNG1']
+	])
+);
 
 export const quizMachine = createMachine({
 	predictableActionArguments: true,
@@ -22,21 +21,22 @@ export const quizMachine = createMachine({
 		questions: [],
 		answers: [],
 		currentRound: 0,
-	} as QuizFlatterStructureDraft,
+	} as QuizState,
 	states: {
 		lobby: {
 			on: {
 				START: [
-					{ target: 'round.answering', cond: 'quizReady' },
+					{ target: 'round.answering', cond: 'quizReady', actions: 'send' },
 				]
 			}
 		},
 		round: {
 			states: {
 				answering: {
+					entry: 'sendRound',
 					on: {
 						ANSWER: [
-							{ target: 'answered', actions: 'setAnswers' },
+							{ target: 'answered', actions: ['setAnswers', 'send'] },
 						]
 					},
 				},
@@ -49,7 +49,7 @@ export const quizMachine = createMachine({
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'revealed', actions: 'revealAnswers' },
+							{ target: 'revealed', actions: ['revealAnswers', 'send'] },
 						]
 					}
 				},
@@ -62,7 +62,7 @@ export const quizMachine = createMachine({
 				scoring: {
 					on: {
 						SCORE: [
-							{ target: 'scored', actions: 'scoreAnswer' }
+							{ target: 'scored', actions: ['scoreAnswer', 'send'] }
 						]
 					}
 				},
@@ -94,6 +94,8 @@ export const quizMachine = createMachine({
 		roundsFinished: (ctx) => ctx.currentRound >= ctx.rounds.length,
 	},
 	actions: {
+		send: (_, event: EventObject) => socket.set({ type: 'any', ...event }),
+		sendRound: (ctx) => socket.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
 		setAnswers: assign({ answers: (ctx, event: Answers) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
 		revealAnswers: assign({ answers: (ctx, event: Reveal) => ctx.answers.map(a => ({ ...a, revealed: a.questionId === event.qIdx && a.player === event.player ? true : a.revealed })) }),
