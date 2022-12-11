@@ -28,5 +28,6 @@ export interface Question {
 export interface Answer {
 	player: string;
 	answer: string;
+	revealed: boolean;
 	score?: number;
 }

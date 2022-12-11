@@ -37,7 +37,7 @@
 									...r,
 									questions: r.questions.map((q, qi) => ({
 										...q,
-										answers: [...q.answers, { player: msg.player, answer: msg.answers[qi] }]
+										answers: [...q.answers, { player: msg.player, answer: msg.answers[qi], revealed: false }]
 									}))
 							  }
 							: r
