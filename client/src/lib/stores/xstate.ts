@@ -1,6 +1,7 @@
-import type { Answers, QuizState } from '$lib/models/messages';
+import type { StateEvent } from '$lib/models/events.model';
+import type { QuizState } from '$lib/models/messages';
 import { connectSocket } from '$lib/utils/websocket';
-import { assign, createMachine, interpret, type EventObject } from 'xstate';
+import { assign, createMachine, interpret } from 'xstate';
 
 const socket = connectSocket(
 	new Map([
@@ -8,6 +9,7 @@ const socket = connectSocket(
 		['adminCode', 'RYKNG1']
 	])
 );
+
 
 export const quizMachine = createMachine({
 	predictableActionArguments: true,
@@ -22,6 +24,9 @@ export const quizMachine = createMachine({
 		answers: [],
 		currentRound: 0,
 	} as QuizState,
+	schema: {
+		events: {} as StateEvent,
+	},
 	states: {
 		lobby: {
 			on: {
@@ -94,29 +99,16 @@ export const quizMachine = createMachine({
 		roundsFinished: (ctx) => ctx.currentRound >= ctx.rounds.length,
 	},
 	actions: {
-		send: (_, event: EventObject) => socket.set({ type: 'any', ...event }),
+		send: (_, event) => socket.set(event),
 		sendRound: (ctx) => socket.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
-		setAnswers: assign({ answers: (ctx, event: Answers) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
-		revealAnswers: assign({ answers: (ctx, event: Reveal) => ctx.answers.map(a => ({ ...a, revealed: a.questionId === event.qIdx && a.player === event.player ? true : a.revealed })) }),
+		setAnswers: assign({ answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
+		revealAnswers: assign({ answers: (ctx, event) => ctx.answers.map(a => ({ ...a, revealed: a.questionId === event.qIdx && a.player === event.player ? true : a.revealed })) }),
 		scoreAnswer: assign({
-			answers: (ctx, event: Score) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === ctx.currentRound && a.player === event.player ? event.score : a.score }))
+			answers: (ctx, event) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === ctx.currentRound && a.player === event.player ? event.score : a.score }))
 		}),
 	}
 });
-
-interface Reveal {
-	type: 'reveal';
-	qIdx: number;
-	player: string;
-}
-
-interface Score {
-	type: 'score';
-	qIdx: number;
-	player: string;
-	score: number;
-}
 
 // pass localstorage value to start method as initial/previous state
 export const quizService = interpret(quizMachine).start();

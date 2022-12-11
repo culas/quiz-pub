@@ -1,4 +1,4 @@
-export type SocketMessage = HostMessage | PlayerMessage | ServerMessage | QuizStateMessage | { type: 'any' };
+export type SocketMessage = HostMessage | PlayerMessage | ServerMessage | QuizStateMessage;
 
 export type QuizStateMessage = { type: 'quiz-state' } & QuizState;
 

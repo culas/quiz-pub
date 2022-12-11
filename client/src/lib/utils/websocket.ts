@@ -1,3 +1,4 @@
+import type { StateEvent } from '$lib/models/events.model';
 import type { SocketMessage } from '$lib/models/messages';
 import websocketStore from '$lib/stores/websocket.store';
 
@@ -12,7 +13,7 @@ export function connectSocket(params?: Map<string, string>) {
 			webSocketURL.searchParams.append(key, val);
 		})
 	}
-	return websocketStore<SocketMessage>(webSocketURL);
+	return websocketStore<SocketMessage | StateEvent>(webSocketURL);
 }
 
 export const websocket = connectSocket();

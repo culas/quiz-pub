@@ -32,7 +32,7 @@
 	let answers: string[] = [];
 
 	function sendAnswers(player: string) {
-		qService.send('ANSWER', { player, answers: answers });
+		qService.send({ type: 'ANSWER', player, answers: answers });
 		answers = [];
 	}
 </script>
@@ -51,16 +51,19 @@
 						<span>{a.player}</span>
 						<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
 						{#if $qService.matches('round.revealing')}
-							<button on:click={() => qService.send('REVEAL', { qIdx: q.id, player: a.player })}
+							<button
+								on:click={() => qService.send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
 								>reveal</button
 							>
 						{:else if $qService.matches('round.scoring')}
 							<button
-								on:click={() => qService.send('SCORE', { qIdx: q.id, player: a.player, score: 1 })}
+								on:click={() =>
+									qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
 								>1</button
 							>
 							<button
-								on:click={() => qService.send('SCORE', { qIdx: q.id, player: a.player, score: 0 })}
+								on:click={() =>
+									qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
 								>0</button
 							>
 						{/if}
