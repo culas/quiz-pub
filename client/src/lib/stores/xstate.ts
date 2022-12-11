@@ -1,17 +1,9 @@
 import type { StateEvent } from '$lib/models/events.model';
-import type { QuizState } from '$lib/models/messages';
-import { connectSocket } from '$lib/utils/websocket';
-import { assign, createMachine, interpret } from 'xstate';
+import type { QuizState, SocketMessage } from '$lib/models/messages';
+import type { Writable } from 'svelte/store';
+import { assign, createMachine } from 'xstate';
 
-const socket = connectSocket(
-	new Map([
-		['joinCode', 'JLAAHU'],
-		['adminCode', 'RYKNG1']
-	])
-);
-
-
-export const quizMachine = createMachine({
+export const quizMachine = (socket: Omit<Writable<StateEvent | SocketMessage>, 'update'>) => createMachine({
 	predictableActionArguments: true,
 	tsTypes: {} as import("./xstate.typegen").Typegen0,
 	id: 'quiz',
@@ -30,7 +22,7 @@ export const quizMachine = createMachine({
 	states: {
 		lobby: {
 			on: {
-				JOIN: { target: 'lobby', actions: 'send' },
+				PLAYERS: { target: 'lobby', actions: 'setPlayers' },
 				START: [
 					{ target: 'round.answering', cond: 'quizReady', actions: 'send' },
 				]
@@ -101,6 +93,7 @@ export const quizMachine = createMachine({
 	},
 	actions: {
 		send: (_, event) => socket.set(event),
+		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
 		setAnswers: assign({ answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
@@ -112,4 +105,4 @@ export const quizMachine = createMachine({
 });
 
 // pass localstorage value to start method as initial/previous state
-export const quizService = interpret(quizMachine).start();
+//export const quizService = interpret(quizMachine(socket)).start();

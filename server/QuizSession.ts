@@ -1,3 +1,4 @@
+import { StateEvent } from '../client/src/lib/models/events.model.ts';
 import { HostMessage, QuizInfo, SocketMessage } from '../client/src/lib/models/messages.ts';
 
 interface Player {
@@ -55,10 +56,10 @@ export class QuizSession {
 	}
 
 	private broadcastPlayers() {
-		this.broadcast({ type: 'players', players: this.players.map(({ name, color }) => ({ name: name ?? 'noname', color })) });
+		this.broadcast({ type: 'PLAYERS', players: this.players.map(({ name, color }) => ({ name: name ?? 'noname', color })) });
 	}
 
-	private broadcast(msg: SocketMessage) {
+	private broadcast(msg: SocketMessage | StateEvent) {
 		const message = JSON.stringify(msg);
 		this.host.send(message);
 		this.players.forEach(p => p.session.send(message));

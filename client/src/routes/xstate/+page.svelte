@@ -2,13 +2,22 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { quizMachine } from '$lib/stores/xstate';
+	import { connectSocket } from '$lib/utils/websocket';
 	import { writable } from 'svelte-local-storage-store';
 	import { interpret } from 'xstate';
 	$: console.log($qService.value, $qService.matches('round'));
 	$: console.table($qService.context.answers);
 	const run = writable('RYKNG1', {} as QuizRun);
+
+	const socket = connectSocket(
+		new Map([
+			['joinCode', 'JLAAHU'],
+			['adminCode', 'RYKNG1']
+		])
+	);
+
 	const qService = interpret(
-		quizMachine.withContext({
+		quizMachine(socket).withContext({
 			name: 'Fishcord Xmas Special',
 			players: [
 				{ name: 'celep', color: 'red' },
@@ -30,6 +39,10 @@
 
 	$: cr = $qService.context.currentRound;
 	let answers: string[] = [];
+
+	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
+		qService.send($socket);
+	}
 
 	function sendAnswers(player: string) {
 		qService.send({ type: 'ANSWER', player, answers: answers });
