@@ -53,30 +53,25 @@
 		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
 			<p><b>Q{q.id + 1}: {q.text}</b></p>
 			{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
-				<section>
-					<div>
-						<span>{a.player}</span>
-						<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
-						{#if $qService.matches('round.revealing')}
-							<button
-								on:click={() => qService.send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
-								>reveal</button
-							>
-						{:else if $qService.matches('round.scoring')}
-							<button
-								on:click={() =>
-									qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
-								>1</button
-							>
-							<button
-								on:click={() =>
-									qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
-								>0</button
-							>
-						{/if}
-					</div>
-					<p>{a.revealed ? a.text : '***'}</p>
-				</section>
+				<div class="answer">
+					<span>{a.player}</span>
+					<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
+					<p>{a.revealed ? a.text : '*****'}</p>
+					{#if $qService.matches('round.revealing') && !a.revealed}
+						<button on:click={() => qService.send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
+							>reveal</button
+						>
+					{:else if $qService.matches('round.scoring')}
+						<button
+							on:click={() =>
+								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}>1</button
+						>
+						<button
+							on:click={() =>
+								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}>0</button
+						>
+					{/if}
+				</div>
 			{/each}
 		{/each}
 	{:else if $qService.matches('result')}
@@ -91,3 +86,18 @@
 		{/each}
 	{/if}
 </div>
+
+<style>
+	.answer {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.answer p {
+		flex-grow: 1;
+	}
+
+	.answer button {
+		padding: 0 0.25rem;
+	}
+</style>
