@@ -2,6 +2,7 @@
 	import PlayerList from '../../../lib/components/PlayerList.svelte';
 
 	import { page } from '$app/stores';
+	import type { StateEvent } from '$lib/models/events.model';
 	import type { QuizInfo, SocketMessage } from '$lib/models/messages';
 	import type { QuizRun, RunningRound } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
@@ -23,7 +24,7 @@
 
 	$: updateRun($socket);
 
-	function updateRun(msg: SocketMessage) {
+	function updateRun(msg: SocketMessage | StateEvent) {
 		switch (msg.type) {
 			case 'players':
 				$run = { ...$run, players: msg.players };

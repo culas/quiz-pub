@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import type { StateEvent } from '$lib/models/events.model';
 	import type { QuizInfo, SocketMessage, StartRound } from '$lib/models/messages';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
@@ -26,7 +27,7 @@
 
 	$: updateQuiz($socket);
 
-	function updateQuiz(msg: SocketMessage) {
+	function updateQuiz(msg: SocketMessage | StateEvent) {
 		if (msg === undefined) return;
 		switch (msg.type) {
 			case 'players':
