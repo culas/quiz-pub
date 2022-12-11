@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Players } from '$lib/models/messages';
+	import ColorPill from './ColorPill.svelte';
 
 	export let players: Players['players'] = [];
 </script>
@@ -8,7 +9,7 @@
 	<b>Players:</b>
 	{#if players && players.length > 0}
 		{#each players as p}
-			<span><i style="background-color: {p.color}" />{p.name}</span>
+			<ColorPill color={p.color}>{p.name}</ColorPill>
 		{/each}
 	{:else}
 		none
@@ -22,21 +23,5 @@
 		gap: var(--base);
 		margin: var(--base) 0;
 		line-height: calc(var(--base) * 6);
-	}
-
-	span {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--base);
-		padding: 0 calc(var(--base) * 2) 0 var(--base);
-		background-color: var(--color-light);
-		border-radius: calc(var(--base) * 3);
-	}
-
-	i {
-		display: inline-block;
-		width: calc(var(--base) * 4);
-		height: calc(var(--base) * 4);
-		border-radius: 50%;
 	}
 </style>
