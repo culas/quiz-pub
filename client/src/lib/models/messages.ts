@@ -4,6 +4,8 @@ export type QuizStateMessage = { type: 'quiz-state' } & QuizState;
 
 export interface QuizState {
 	name: string;
+	joinCode: string;
+	adminCode: string;
 	players: { name: string, color: string }[];
 	rounds: { id: number, text: string }[];
 	questions: { roundId: number, id: number, text: string }[];
