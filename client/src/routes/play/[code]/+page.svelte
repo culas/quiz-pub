@@ -42,9 +42,11 @@
 				round = msg;
 				break;
 			case 'end-round':
+			case 'REVEAL':
 				state = 'revealing';
 				break;
 			case 'score-answer':
+			case 'SCORE':
 				state = 'scoring';
 				break;
 		}
@@ -54,6 +56,7 @@
 	function sendAnswers() {
 		$socket = { type: 'ANSWER', player: $name, answers: answers };
 		answers = [];
+		state = 'revealing';
 	}
 </script>
 
@@ -83,4 +86,12 @@
 		{/each}
 		<button type="submit">send answers</button>
 	</form>
+{/if}
+
+{#if state === 'revealing'}
+	<p>Wait for all players to submit their answers and the host to reveal them</p>
+{/if}
+
+{#if state === 'scoring'}
+	<p>Wait for host to score all answers</p>
 {/if}

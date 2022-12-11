@@ -42,12 +42,6 @@
 	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
 		qService.send($socket);
 	}
-
-	let answers: string[] = [];
-	function sendAnswers(player: string) {
-		qService.send({ type: 'ANSWER', player, answers: answers });
-		answers = [];
-	}
 </script>
 
 <div>
@@ -84,14 +78,7 @@
 					<p>{a.revealed ? a.text : '***'}</p>
 				</section>
 			{/each}
-			{#if $qService.matches('round.answering')}
-				<input type="text" bind:value={answers[q.id]} />
-			{/if}
 		{/each}
-		{#if $qService.matches('round.answering')}
-			<button on:click={() => sendAnswers('celep')}>answer celep</button>
-			<button on:click={() => sendAnswers('matte')}>answer matte</button>
-		{/if}
 	{:else if $qService.matches('result')}
 		<h2>Scores</h2>
 		{#each $qService.context.players as player}
