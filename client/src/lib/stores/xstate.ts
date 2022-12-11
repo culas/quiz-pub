@@ -24,14 +24,16 @@ export const quizMachine = (socket: Omit<Writable<StateEvent | SocketMessage>, '
 			on: {
 				PLAYERS: { target: 'lobby', actions: 'setPlayers' },
 				START: [
-					{ target: 'round.answering', cond: 'quizReady', actions: 'send' },
+					{ target: 'round.starting', cond: 'quizReady', actions: 'send' },
 				]
 			}
 		},
 		round: {
 			states: {
+				starting: {
+					always: { target: 'answering', actions: 'sendRound' },
+				},
 				answering: {
-					entry: 'sendRound',
 					on: {
 						ANSWER: [
 							{ target: 'answered', actions: ['setAnswers', 'send'] },
@@ -73,7 +75,7 @@ export const quizMachine = (socket: Omit<Writable<StateEvent | SocketMessage>, '
 				finished: {
 					always: [
 						{ target: '#result', cond: 'roundsFinished' },
-						{ target: 'answering' }
+						{ target: 'starting' }
 					]
 				}
 			},
