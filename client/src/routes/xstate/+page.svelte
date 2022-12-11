@@ -38,12 +38,12 @@
 	).start();
 
 	$: cr = $qService.context.currentRound;
-	let answers: string[] = [];
 
 	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
 		qService.send($socket);
 	}
 
+	let answers: string[] = [];
 	function sendAnswers(player: string) {
 		qService.send({ type: 'ANSWER', player, answers: answers });
 		answers = [];

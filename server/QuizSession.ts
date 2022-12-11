@@ -45,7 +45,7 @@ export class QuizSession {
 				player.name = data.name;
 				this.broadcastPlayers();
 				socket.send(JSON.stringify(this.getQuizInfo()));
-			} else if (data.type === 'answers') {
+			} else if (data.type === 'answers' || data.type === 'ANSWER') {
 				this.host.send(msg.data);
 			}
 		}
@@ -80,7 +80,7 @@ export class QuizSession {
 		}
 	}
 
-	private parse<T extends SocketMessage>(msg: MessageEvent<string>): T {
+	private parse<T extends SocketMessage | StateEvent>(msg: MessageEvent<string>): T {
 		return JSON.parse(msg.data);
 	}
 }

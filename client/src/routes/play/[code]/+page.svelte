@@ -49,6 +49,12 @@
 				break;
 		}
 	}
+
+	let answers: string[] = [];
+	function sendAnswers() {
+		$socket = { type: 'ANSWER', player: $name, answers: answers };
+		answers = [];
+	}
 </script>
 
 {#if state === 'joining'}
@@ -70,8 +76,11 @@
 
 {#if state === 'answering'}
 	<h2>Round: {round.name}</h2>
-	{#each round.questions as q}
-		<p>{q}</p>
-		<input type="text" />
-	{/each}
+	<form on:submit|preventDefault={() => sendAnswers()}>
+		{#each round.questions as q, i}
+			<p>{q}</p>
+			<input type="text" bind:value={answers[i]} />
+		{/each}
+		<button type="submit">send answers</button>
+	</form>
 {/if}
