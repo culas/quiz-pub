@@ -32,6 +32,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"svelte-local-storage-store": "^0.3.2"
+		"@xstate/svelte": "^2.0.1",
+		"svelte-local-storage-store": "^0.3.2",
+		"xstate": "^4.35.0"
 	}
 }
