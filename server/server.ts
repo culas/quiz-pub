@@ -8,26 +8,26 @@ const sessions: Map<string, QuizSession> = new Map();
 function reqHandler(req: Request) {
   const appDistDir = parse(Deno.args).dist || "client/build";
   const url = new URL(req.url);
-  if (req.headers.get('upgrade') === 'websocket') {
+  if (req.headers.get("upgrade") === "websocket") {
     const { socket, response } = Deno.upgradeWebSocket(req);
     try {
-      const joinCode = url.searchParams.get('joinCode');
-      const adminCode = url.searchParams.get('adminCode');
-      console.log('joinCode', joinCode, 'adminCode', adminCode);
+      const joinCode = url.searchParams.get("joinCode");
+      const adminCode = url.searchParams.get("adminCode");
+      console.log("joinCode", joinCode, "adminCode", adminCode);
       if (adminCode && joinCode) {
-        console.log('connecting host');
+        console.log("connecting host");
         if (sessions.has(joinCode)) {
           const session = sessions.get(joinCode);
           if (session?.adminCode === adminCode) {
-            console.log('looks like a reconnect from the host');
+            console.log("looks like a reconnect from the host");
             session.addHost(socket);
           }
         } else {
-          console.log('creating session');
+          console.log("creating session");
           sessions.set(joinCode, new QuizSession(adminCode, joinCode, socket));
         }
       } else if (joinCode) {
-        console.log('connecting player');
+        console.log("connecting player");
         sessions.get(joinCode)?.addPlayer(socket);
       }
     } catch (error: any) {
