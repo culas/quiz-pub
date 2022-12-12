@@ -7,11 +7,16 @@ const sessions: Map<string, QuizSession> = new Map();
 
 async function reqHandler(req: Request) {
   console.log('directory contents:');
-  for await (const dirEntry of Deno.readDir("/")) {
+  for await (const dirEntry of Deno.readDir(Deno.cwd())) {
     console.log(dirEntry.name);
-   }
+  }
   console.log('==== done ====');
-  const appDistDir = parse(Deno.args).dist || "client/build";
+  const appDistDir = parse(Deno.args).dist || "client";
+  console.log('directory contents of appDistDir:');
+  for await (const dirEntry of Deno.readDir(`${Deno.cwd()}/${appDistDir}`)) {
+    console.log(dirEntry.name);
+  }
+  console.log('==== done ====');
   console.log('appDistDir', appDistDir, parse(Deno.args).dist);
   const url = new URL(req.url);
   if (req.headers.get("upgrade") === "websocket") {
