@@ -91,6 +91,10 @@ section {
 	box-shadow: var(--box-shadow);
 }
 
+section.disabled {
+	opacity: .75;
+}
+
 p {
 	margin: 0;
 }

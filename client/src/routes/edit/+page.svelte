@@ -54,22 +54,23 @@
 	function changeDeletedFlag(id: string, deleted: boolean) {
 		$saves = [...$saves.map((save) => (save.id === id ? { ...save, deleted } : save))];
 	}
+	$: quizzes = $saves.filter((s) => !s.deleted || showDeleted).sort((s) => -s.date);
 </script>
 
 <h1>Quiz Saves</h1>
 
 <button on:click={createNewQuiz}>create new quiz</button>
 
-{#each $saves.filter((s) => !s.deleted || showDeleted) as save}
-	<section>
+{#each quizzes as save}
+	<section class:disabled={save.deleted}>
 		<h2>{save.name}</h2>
 		<p>Rounds: {save.rounds.length}</p>
 		<p>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</p>
 		<p>Last save: {new Date(save.date).toLocaleString()}</p>
-		<a class="button" href="edit/{save.id}">Edit</a>
 		{#if save.deleted}
 			<button on:click={() => restoreQuiz(save.id)}>restore</button>
 		{:else}
+			<a class="button" href="edit/{save.id}">edit</a>
 			<button on:click={() => runQuiz(save)}>run</button>
 			<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
 		{/if}

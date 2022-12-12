@@ -2,17 +2,18 @@
 	import { runs } from '$lib/stores/runs.store';
 
 	$: showFinished = false;
+	$: quizzes = $runs.filter((r) => !r.done || showFinished).map((r) => r);
 </script>
 
 <h1>Quiz Runs</h1>
 
-{#each $runs.filter((r) => !r.done || showFinished).map((r) => r.context) as quiz}
-	<section>
-		<h2>{quiz.name}</h2>
-		<!-- <p>State: {quiz.state}</p> -->
-		<p>Players: {quiz.players.length}</p>
-		<p>Join Code: <b>{quiz.joinCode}</b></p>
-		<a class="button" href="run/{quiz.adminCode}">Open</a>
+{#each quizzes as quiz}
+	<section class:disabled={quiz.done}>
+		<h2>{quiz.context.name}</h2>
+		<p>State: {quiz.done ? 'finished' : 'running'}</p>
+		<p>Players: {quiz.context.players.length}</p>
+		<p>Join Code: <b>{quiz.context.joinCode}</b></p>
+		<a class="button" href="run/{quiz.context.adminCode}">Open</a>
 	</section>
 {/each}
 <button on:click={() => (showFinished = !showFinished)}
