@@ -2,10 +2,10 @@
 	import { page } from '$app/stores';
 	import { copy } from '$lib/actions/copy.action';
 	import PlayerList from '$lib/components/PlayerList.svelte';
-	import type { StateEvent } from '$lib/models/events.model';
-	import type { QuizState } from '$lib/models/messages';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
+	import type { StateEvent } from '$server-interface/events.model';
+	import type { QuizState } from '$server-interface/messages';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';

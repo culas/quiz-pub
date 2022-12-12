@@ -1,6 +1,6 @@
-import type { StateEvent } from '$lib/models/events.model';
-import type { SocketMessage } from '$lib/models/messages';
 import websocketStore from '$lib/stores/websocket.store';
+import type { StateEvent } from '$server-interface/events.model';
+import type { SocketMessage } from '$server-interface/messages';
 
 let socket: WebSocket;
 

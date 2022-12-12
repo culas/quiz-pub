@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Players } from '$lib/models/messages';
+	import type { Players } from '$server-interface/messages';
 	import ColorPill from './ColorPill.svelte';
 
 	export let players: Players['players'] = [];

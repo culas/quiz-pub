@@ -1,5 +1,5 @@
-import type { StateEvent } from '$lib/models/events.model';
-import type { QuizState, SocketMessage } from '$lib/models/messages';
+import type { StateEvent } from '$server-interface/events.model';
+import type { QuizState, SocketMessage } from '$server-interface/messages';
 import type { Writable } from 'svelte/store';
 import { assign, createMachine } from 'xstate';
 
@@ -98,7 +98,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	},
 	actions: {
 		send: (_, event) => socket?.set(event),
-		save: ctx => console.log('save'),
+		save: () => console.log('save'),
 		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),

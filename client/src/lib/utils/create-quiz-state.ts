@@ -1,5 +1,5 @@
-import type { QuizState } from '$lib/models/messages';
 import type { QuizSave } from '$lib/models/quiz-save.model';
+import type { QuizState } from '$server-interface/messages';
 import { randomId } from './random-id';
 
 export function createQuizContext(save: QuizSave, code: string): QuizState {

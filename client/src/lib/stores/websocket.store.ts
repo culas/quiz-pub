@@ -7,7 +7,6 @@ const reopenTimeouts = [2000, 5000, 10000, 30000, 60000];
  * Data is transferred as JSON.
  * Keeps socket open (reopens if closed) as long as there are subscriptions.
  * @param {string} url the WebSocket url
- * @param {any} initialValue store value used before 1st. response from server is present
  * @return {Store}
  * adapted from: https://github.com/arlac77/svelte-websocket-store
  */

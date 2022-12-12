@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import PlayerList from '$lib/components/PlayerList.svelte';
-	import type { StateEvent } from '$lib/models/events.model';
-	import type { QuizInfo, SocketMessage, StartRound } from '$lib/models/messages';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
+	import type { StateEvent } from '$server-interface/events.model';
+	import type { QuizInfo, SocketMessage, StartRound } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
 
 	const name = writable($page.params.code, '');

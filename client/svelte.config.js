@@ -9,7 +9,10 @@ const config = {
 			precompress: true,
 			fallback: 'index.html'
 		}),
-		prerender: { entries: [] }
+		alias: {
+			'$server-interface': '../server/'
+		},
+		prerender: { entries: [] },
 	}
 };
 

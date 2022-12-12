@@ -1,9 +1,5 @@
-import { StateEvent } from "../client/src/lib/models/events.model.ts";
-import {
-  HostMessage,
-  QuizInfo,
-  SocketMessage,
-} from "../client/src/lib/models/messages.ts";
+import { StateEvent } from "./events.model.ts";
+import { HostMessage, QuizInfo, SocketMessage } from "./messages.ts";
 
 interface Player {
   session: WebSocket;
