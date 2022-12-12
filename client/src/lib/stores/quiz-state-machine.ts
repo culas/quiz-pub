@@ -51,15 +51,9 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'revealed', actions: ['revealAnswers', 'send', 'save'] },
+							{ target: 'scoring', actions: ['reveal', 'send', 'save'] },
 						]
 					}
-				},
-				revealed: {
-					always: [
-						{ target: 'scoring', cond: 'answersRevealed' },
-						{ target: 'revealing' },
-					]
 				},
 				scoring: {
 					on: {
@@ -92,7 +86,6 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	guards: {
 		quizReady: ctx => ctx.players.length > 0,
 		answersComplete: (ctx) => ctx.answers.filter(a => a.roundId === ctx.currentRound).length === (ctx.players.length * ctx.questions.filter(q => q.roundId === ctx.currentRound).length),
-		answersRevealed: (ctx) => ctx.answers.every(a => a.revealed === true),
 		answersScored: (ctx) => ctx.answers.every(a => a.score !== undefined),
 		roundsFinished: (ctx) => ctx.currentRound >= ctx.rounds.length,
 	},
@@ -103,7 +96,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
 		setAnswers: assign({ answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
-		revealAnswers: assign({ answers: (ctx, event) => ctx.answers.map(a => ({ ...a, revealed: a.questionId === event.qIdx && a.player === event.player ? true : a.revealed })) }),
+		reveal: assign({ answers: (ctx) => ctx.answers.map(a => ({ ...a, revealed: true })) }),
 		scoreAnswer: assign({
 			answers: (ctx, event) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === ctx.currentRound && a.player === event.player ? event.score : a.score }))
 		}),

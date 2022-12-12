@@ -28,7 +28,16 @@
 		send($socket);
 		$state = $qService; // explicit save, as change detection is off with this flow
 	}
+	$: playersAnswered = $qService.context.answers
+		.filter((a) => a.roundId === cr)
+		.map((name) => $qService.context.players.find((p) => p.name === name.player))
+		.reduce(
+			(acc, player) => (player && !acc.includes(player) ? acc.concat(player) : acc),
+			[] as { name: string; color: string }[]
+		);
 </script>
+
+<h1>{$qService.context.name}</h1>
 
 <div>
 	{#if $qService.matches('lobby')}
@@ -41,29 +50,36 @@
 		</p>
 		<PlayerList players={$qService.context.players} />
 		<button on:click={() => send('START')}>start</button>
+		<p>answering</p>
 	{:else if $qService.matches('round')}
 		<h2>{$qService.context.rounds[cr].text}</h2>
+		{#if $qService.matches('round.answering')}
+			<PlayerList players={playersAnswered} />
+		{/if}
+		{#if $qService.matches('round.revealing')}
+			<button on:click={() => send('REVEAL')}>reveal</button>
+		{/if}
 		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
 			<p><b>Q{q.id + 1}: {q.text}</b></p>
-			{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
-				<div class="answer">
-					<span>{a.player}</span>
-					<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
-					<p>{a.revealed ? a.text : '*****'}</p>
-					{#if $qService.matches('round.revealing') && !a.revealed}
-						<button on:click={() => send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
-							>reveal</button
-						>
-					{:else if $qService.matches('round.scoring')}
-						<button on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
-							>1</button
-						>
-						<button on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
-							>0</button
-						>
-					{/if}
-				</div>
-			{/each}
+			{#if $qService.matches('round.scoring') || $qService.matches('round.scored')}
+				{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
+					<div class="answer">
+						<span>{a.player}</span>
+						<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
+						<p>{a.text}</p>
+						{#if $qService.matches('round.scoring')}
+							<button
+								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
+								>1</button
+							>
+							<button
+								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
+								>0</button
+							>
+						{/if}
+					</div>
+				{/each}
+			{/if}
 		{/each}
 	{:else if $qService.matches('result')}
 		<h2>Scores</h2>
