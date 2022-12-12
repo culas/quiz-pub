@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { copy } from '$lib/actions/copy.action';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { StateEvent } from '$lib/models/events.model';
 	import type { QuizState } from '$lib/models/messages';
@@ -28,7 +29,13 @@
 
 <div>
 	{#if $qService.matches('lobby')}
-		<p>Invite players with code: <b>{$qService.context.joinCode}</b></p>
+		<p>
+			Invite players with code: <b
+				use:copy={location.protocol + location.host + '/play/' + $qService.context.joinCode}
+				>{$qService.context.joinCode}</b
+			>
+			(click code to copy invite link)
+		</p>
 		<PlayerList players={$qService.context.players} />
 		<button on:click={() => qService.send('START')}>start</button>
 	{:else if $qService.matches('round')}
