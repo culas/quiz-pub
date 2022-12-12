@@ -4,7 +4,7 @@
 	import type { QuizSave } from '$lib/models/quiz-save.model';
 	import { runCodes } from '$lib/stores/runs.store';
 	import { saves } from '$lib/stores/saves.store';
-	import { quizMachine } from '$lib/stores/xstate';
+	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
 	import { writable } from 'svelte-local-storage-store';

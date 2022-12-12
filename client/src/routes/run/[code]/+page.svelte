@@ -4,13 +4,13 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { StateEvent } from '$lib/models/events.model';
 	import type { QuizState } from '$lib/models/messages';
-	import { quizMachine } from '$lib/stores/xstate';
+	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
+	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
-	import { interpret } from 'xstate';
 
-	const state = writable($page.params.code, {} as State<QuizState, StateEvent>);
+	const state = writable($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
 
 	const socket = connectSocket(
 		new Map([
@@ -19,11 +19,14 @@
 		])
 	);
 
-	const qService = interpret(quizMachine(socket)).start($state);
+	const { state: qService, send } = useMachine(quizMachine(socket), { state: $state });
+	// TODO: submitted answers aren't saved until starting to score, for some reason (hidden from change detection b/c socket?)
+	$: $state = $qService;
+
 	$: cr = $qService.context.currentRound;
 
 	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
-		qService.send($socket);
+		send($socket);
 	}
 </script>
 
@@ -37,7 +40,7 @@
 			(click code to copy invite link)
 		</p>
 		<PlayerList players={$qService.context.players} />
-		<button on:click={() => qService.send('START')}>start</button>
+		<button on:click={() => send('START')}>start</button>
 	{:else if $qService.matches('round')}
 		<h2>{$qService.context.rounds[cr].text}</h2>
 		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
@@ -48,17 +51,15 @@
 					<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
 					<p>{a.revealed ? a.text : '*****'}</p>
 					{#if $qService.matches('round.revealing') && !a.revealed}
-						<button on:click={() => qService.send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
+						<button on:click={() => send({ type: 'REVEAL', qIdx: q.id, player: a.player })}
 							>reveal</button
 						>
 					{:else if $qService.matches('round.scoring')}
-						<button
-							on:click={() =>
-								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}>1</button
+						<button on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
+							>1</button
 						>
-						<button
-							on:click={() =>
-								qService.send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}>0</button
+						<button on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
+							>0</button
 						>
 					{/if}
 				</div>

@@ -5,7 +5,7 @@ import { assign, createMachine } from 'xstate';
 
 export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 'update'>) => createMachine({
 	predictableActionArguments: true,
-	tsTypes: {} as import("./xstate.typegen").Typegen0,
+	tsTypes: {} as import("./quiz-state-machine.typegen").Typegen0,
 	id: 'quiz',
 	initial: 'lobby',
 	context: {
@@ -24,21 +24,21 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	states: {
 		lobby: {
 			on: {
-				PLAYERS: { target: 'lobby', actions: 'setPlayers' },
+				PLAYERS: { target: 'lobby', actions: ['setPlayers', 'save'] },
 				START: [
-					{ target: 'round.starting', cond: 'quizReady', actions: 'send' },
+					{ target: 'round.starting', cond: 'quizReady', actions: ['send', 'save'] },
 				]
-			}
+			},
 		},
 		round: {
 			states: {
 				starting: {
-					always: { target: 'answering', actions: 'sendRound' },
+					always: { target: 'answering', actions: ['sendRound', 'save'] },
 				},
 				answering: {
 					on: {
 						ANSWER: [
-							{ target: 'answered', actions: ['setAnswers', 'send'] },
+							{ target: 'answered', actions: ['setAnswers', 'send', 'save'] },
 						]
 					},
 				},
@@ -51,7 +51,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'revealed', actions: ['revealAnswers', 'send'] },
+							{ target: 'revealed', actions: ['revealAnswers', 'send', 'save'] },
 						]
 					}
 				},
@@ -64,13 +64,13 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				scoring: {
 					on: {
 						SCORE: [
-							{ target: 'scored', actions: ['scoreAnswer', 'send'] }
+							{ target: 'scored', actions: ['scoreAnswer', 'send', 'save'] }
 						]
 					}
 				},
 				scored: {
 					always: [
-						{ target: 'finished', cond: 'answersScored', actions: 'nextRound' },
+						{ target: 'finished', cond: 'answersScored', actions: ['nextRound', 'save'] },
 						{ target: 'scoring' }
 					]
 				},
@@ -84,7 +84,8 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		},
 		result: {
 			id: 'result',
-			type: 'final'
+			type: 'final',
+			always: { actions: 'save' }
 		}
 	}
 }, {
@@ -97,6 +98,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	},
 	actions: {
 		send: (_, event) => socket?.set(event),
+		save: ctx => console.log('save'),
 		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
@@ -107,6 +109,3 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		}),
 	}
 });
-
-// pass localstorage value to start method as initial/previous state
-//export const quizService = interpret(quizMachine(socket)).start();
