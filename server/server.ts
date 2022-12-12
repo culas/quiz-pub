@@ -5,8 +5,14 @@ import { QuizSession } from "./QuizSession.ts";
 
 const sessions: Map<string, QuizSession> = new Map();
 
-function reqHandler(req: Request) {
+async function reqHandler(req: Request) {
+  console.log('directory contents:');
+  for await (const dirEntry of Deno.readDir("/")) {
+    console.log(dirEntry.name);
+   }
+  console.log('==== done ====');
   const appDistDir = parse(Deno.args).dist || "client/build";
+  console.log('appDistDir', appDistDir, parse(Deno.args).dist);
   const url = new URL(req.url);
   if (req.headers.get("upgrade") === "websocket") {
     const { socket, response } = Deno.upgradeWebSocket(req);
@@ -36,8 +42,10 @@ function reqHandler(req: Request) {
     return response;
   }
   if (url.pathname.match(/\.(js|css|png)$/)) {
+    console.log('serving asset', req, `${Deno.cwd()}/${appDistDir}/${url.pathname}`);
     return serveFile(req, `${Deno.cwd()}/${appDistDir}/${url.pathname}`);
   }
+  console.log('serving client', req, `${Deno.cwd()}/${appDistDir}/index.html`);
   return serveFile(req, `${Deno.cwd()}/${appDistDir}/index.html`);
 }
 
