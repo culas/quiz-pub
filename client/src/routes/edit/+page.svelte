@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import type { QuizState } from '$lib/models/messages';
 	import type { QuizSave } from '$lib/models/quiz-save.model';
+	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { runCodes } from '$lib/stores/runs.store';
 	import { saves } from '$lib/stores/saves.store';
-	import { quizMachine } from '$lib/stores/quiz-state-machine';
+	import { createQuizContext } from '$lib/utils/create-quiz-state';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
 	import { writable } from 'svelte-local-storage-store';
@@ -18,20 +18,6 @@
 			writable(code, {}).set(quizMachine().withContext(createQuizContext(save, code)).initialState);
 			goto(`run/${code}`);
 		}
-	}
-	function createQuizContext(save: QuizSave, code: string): QuizState {
-		return {
-			name: save.name,
-			adminCode: code,
-			joinCode: randomId(6),
-			players: [],
-			rounds: save.rounds.map((r, i) => ({ text: r.name, id: i })),
-			questions: save.rounds.flatMap((r, ri) =>
-				r.questions.map((q, qi) => ({ text: q, id: qi, roundId: ri }))
-			),
-			answers: [],
-			currentRound: 0
-		};
 	}
 
 	function deleteQuiz(id: string) {
