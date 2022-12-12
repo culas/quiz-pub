@@ -65,6 +65,12 @@ button:active,
 	background-color: var(--color-dark);
 }
 
+button:disabled {
+	background-color: var(--color-primary);
+	cursor: auto;
+	opacity: .75;
+}
+
 .warn {
 	background-color: var(--color-warning);
 }
