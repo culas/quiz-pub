@@ -1,4 +1,11 @@
-<header><a href="/">QuizPub</a></header>
+<script>
+	import Navigation from '$lib/components/Navigation.svelte';
+</script>
+
+<header>
+	<a href="/">QuizPub</a>
+	<Navigation />
+</header>
 
 <main>
 	<slot />
@@ -22,7 +29,7 @@
 	}
 
 	footer {
-		font-size: .75rem;
+		font-size: 0.75rem;
 	}
 
 	a {
