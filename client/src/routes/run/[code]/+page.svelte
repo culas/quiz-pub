@@ -20,13 +20,13 @@
 	);
 
 	const { state: qService, send } = useMachine(quizMachine(socket), { state: $state });
-	// TODO: submitted answers aren't saved until starting to score, for some reason (hidden from change detection b/c socket?)
 	$: $state = $qService;
 
 	$: cr = $qService.context.currentRound;
 
 	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
 		send($socket);
+		$state = $qService; // explicit save, as change detection is off with this flow
 	}
 </script>
 
