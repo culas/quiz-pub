@@ -40,7 +40,7 @@ jobs:
 
       - name: Copy to dist folder
         run: |
-          mkdir -p dist/solid
+          mkdir -p dist/client
           cp -r server/* dist/
           cp -r client/build/* dist/client/
 
