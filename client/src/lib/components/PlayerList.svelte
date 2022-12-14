@@ -9,7 +9,7 @@
 <div class:collapse>
 	<b on:click={() => (collapse = !collapse)}>Players</b>
 	{#if players && players.length > 0}
-		{#each new Array(40).fill(players[0]) as p}
+		{#each players as p}
 			<ColorPill color={p.color}>{p.name}</ColorPill>
 		{/each}
 	{:else}
