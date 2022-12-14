@@ -50,6 +50,8 @@
 
 <h1>{$qService.context.name}</h1>
 
+<PlayerList players={$qService.context.players} />
+
 <div>
 	{#if $qService.matches('lobby')}
 		<p>
@@ -59,19 +61,17 @@
 			>
 			(click code to copy invite link)
 		</p>
-		<PlayerList players={$qService.context.players} />
 		<button on:click={() => send('START')}>start</button>
 	{:else if $qService.matches('round')}
 		<h2>{$qService.context.rounds[cr].text}</h2>
 		{#if $qService.matches('round.answering')}
-			<PlayerList players={playersAnswered} />
 			{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
 				<h3>Q{q.id + 1}: {q.text}</h3>
 			{/each}
 		{/if}
 		{#if $qService.matches('round.scoring') || $qService.matches('round.revealing')}
 			<AnswersList
-				questions={$qService.context.questions.filter((q) => q.roundId === cr).map(q => q.text)}
+				questions={$qService.context.questions.filter((q) => q.roundId === cr).map((q) => q.text)}
 				answers={$qService.context.answers.filter((a) => a.roundId === cr)}
 				censorAnswers={$qService.matches('round.revealing')}
 				showScoring={$qService.matches('round.scoring')}
@@ -107,5 +107,3 @@
 		{/each}
 	{/if}
 </div>
-
-

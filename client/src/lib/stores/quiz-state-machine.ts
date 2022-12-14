@@ -33,14 +33,14 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		round: {
 			states: {
 				starting: {
-					always: { target: 'answering', actions: ['sendRound'] },
+					always: { target: 'answering', actions: ['sendRound', 'resetPlayerColors'] },
 				},
 				answering: {
 					on: {
 						ANSWER: [
 							{ target: 'answered', actions: ['setAnswers'] },
 						],
-						SKIPANSWERS: {target: 'revealing', actions: 'send'}
+						SKIPANSWERS: { target: 'revealing', actions: 'send' }
 					},
 				},
 				answered: {
@@ -94,12 +94,16 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	},
 	actions: {
 		send: (_, event) => socket?.set(event),
-		sendAnswers: ctx => socket?.set({ type: 'answers', roundName: ctx.rounds[ctx.currentRound].text, answers: ctx.answers.filter(a => a.roundId === ctx.currentRound)}),
+		sendAnswers: ctx => socket?.set({ type: 'answers', roundName: ctx.rounds[ctx.currentRound].text, answers: ctx.answers.filter(a => a.roundId === ctx.currentRound) }),
 		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
-		setAnswers: assign({ answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
+		setAnswers: assign({
+			answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))],
+			players: (ctx, event) => ctx.players.map(p => p.name === event.player ? { ...p, color: 'var(--color-primary)' } : p)
+		}),
 		reveal: assign({ answers: (ctx) => ctx.answers.map(a => ({ ...a, revealed: true })) }),
+		resetPlayerColors: assign({ players: ctx => ctx.players.map(p => ({ ...p, color: 'var(--color-white)' })) }),
 		scoreAnswer: assign({
 			answers: (ctx, event) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === event.rIdx && a.player === event.player ? event.score : a.score }))
 		}),
