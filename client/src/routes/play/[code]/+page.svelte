@@ -43,6 +43,7 @@
 				round = msg;
 				break;
 			case 'end-round':
+			case 'SKIPANSWERS':
 			case 'REVEAL':
 				state = 'revealing';
 				break;
@@ -54,7 +55,7 @@
 	}
 
 	function sendAnswers(answers: string[]) {
-		$socket = { type: 'ANSWER', player: $name, answers};
+		$socket = { type: 'ANSWER', player: $name, answers };
 		state = 'revealing';
 	}
 </script>

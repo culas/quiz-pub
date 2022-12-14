@@ -2,6 +2,7 @@ export type StateEvent =
   | JoinEvent
   | StartEvent
   | AnswerEvent
+  | SkipAnswersEvent
   | RevealEvent
   | ScoreEvent
   | ConfirmScoreEvent;
@@ -19,6 +20,10 @@ export interface AnswerEvent {
   type: "ANSWER";
   player: string;
   answers: string[];
+}
+
+export interface SkipAnswersEvent {
+  type: "SKIPANSWERS";
 }
 
 export interface RevealEvent {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { copy } from '$lib/actions/copy.action';
+	import { tooltip } from '$lib/actions/tooltip.action';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import SelectScore from '$lib/components/SelectScore.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
@@ -76,12 +77,18 @@
 						<b>{a.player}:</b>
 						<p>{a.text}</p>
 						{#if $qService.matches('round.scoring')}
-							<SelectScore score={a.score} on:change={(e) => sendScore(e.detail, q.roundId, q.id, a.player)} />
+							<SelectScore
+								score={a.score}
+								on:change={(e) => sendScore(e.detail, q.roundId, q.id, a.player)}
+							/>
 						{/if}
 					</div>
 				{/each}
 			{/if}
 		{/each}
+		{#if $qService.matches('round.answering')}
+			<button class="warn" use:tooltip data-tooltip="Will end the round without waiting for all answers!" on:click={() => send({ type: 'SKIPANSWERS' })}>skip</button>
+		{/if}
 		{#if $qService.matches('round.scoring')}
 			<button
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}
@@ -109,6 +116,6 @@
 
 	.answer p {
 		flex-grow: 1;
-		margin-bottom: .5rem;
+		margin-bottom: 0.5rem;
 	}
 </style>
