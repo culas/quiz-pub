@@ -4,6 +4,7 @@
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import Standings from '$lib/components/Standings.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
@@ -97,13 +98,6 @@
 		{/if}
 	{:else if $qService.matches('result')}
 		<h2>Scores</h2>
-		{#each $qService.context.players as player}
-			<p>
-				<b>{player.name}:</b>
-				{$qService.context.answers
-					.filter((a) => a.player === player.name)
-					.reduce((sum, a) => sum + (a.score ?? 0), 0)}
-			</p>
-		{/each}
+		<Standings answers={$qService.context.answers} rounds={$qService.context.rounds}></Standings>
 	{/if}
 </div>

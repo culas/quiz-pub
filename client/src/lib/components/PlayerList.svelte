@@ -34,6 +34,7 @@
 
 	b {
 		flex-shrink: 0;
+		cursor: pointer;
 	}
 
 	b:after {
