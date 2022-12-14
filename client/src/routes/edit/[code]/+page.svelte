@@ -34,41 +34,52 @@
 		quiz.date = Date.now();
 		$saves = [...$saves.filter((q) => q.id !== quiz.id), quiz];
 	}
+
+	$: disabled =
+		quiz.name.length < 3 ||
+		quiz.rounds.length === 0 ||
+		quiz.rounds.some(
+			(r) => r.name.length < 3 || r.questions.length === 0 || r.questions.some((q) => q.length < 3)
+		);
 </script>
 
 <h1>Edit Quiz «{quiz.name}»</h1>
 
-<section>
-	<label>
-		<h2>Name</h2>
-		<input type="text" bind:value={quiz.name} />
-	</label>
-</section>
-
-{#each quiz.rounds as round, rIdx}
-	<section class="round">
+<form on:submit|preventDefault={save}>
+	<section>
 		<label>
-			<h2>Round</h2>
-			<input type="text" bind:value={round.name} />
-			<button class="warn" on:click={() => removeRound(rIdx)}>delete round</button>
+			<h2>Name</h2>
+			<input type="text" bind:value={quiz.name} />
 		</label>
-
-		{#each round.questions as question, qIdx}
-			<label>
-				<h3>Q{qIdx + 1}</h3>
-				<input type="text" bind:value={question} />
-				<button class="warn" on:click={() => removeQuestion(rIdx, qIdx)}>delete question</button>
-			</label>
-		{/each}
-		<button on:click={() => addQuestion(rIdx)}>add question</button>
 	</section>
-{/each}
 
-<section>
-	<button on:click={addRound}>add round</button>
-</section>
+	{#each quiz.rounds as round, rIdx}
+		<section class="round">
+			<label>
+				<h2>Round</h2>
+				<input type="text" bind:value={round.name} />
+				<button type="button" class="warn" on:click={() => removeRound(rIdx)}>delete round</button>
+			</label>
 
-<button on:click={save}>save</button>
+			{#each round.questions as question, qIdx}
+				<label>
+					<h3>Q{qIdx + 1}</h3>
+					<input type="text" bind:value={question} />
+					<button type="button" class="warn" on:click={() => removeQuestion(rIdx, qIdx)}
+						>delete question</button
+					>
+				</label>
+			{/each}
+			<button type="button" on:click={() => addQuestion(rIdx)}>add question</button>
+		</section>
+	{/each}
+
+	<section>
+		<button type="button" on:click={addRound}>add round</button>
+	</section>
+
+	<button {disabled} type="submit">save</button>
+</form>
 
 <style>
 	label {

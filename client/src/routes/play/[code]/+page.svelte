@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import AnswersForm from '$lib/components/AnswersForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
@@ -52,10 +53,8 @@
 		}
 	}
 
-	let answers: string[] = [];
-	function sendAnswers() {
-		$socket = { type: 'ANSWER', player: $name, answers: answers };
-		answers = [];
+	function sendAnswers(answers: string[]) {
+		$socket = { type: 'ANSWER', player: $name, answers};
 		state = 'revealing';
 	}
 </script>
@@ -66,7 +65,7 @@
 			Name
 			<input type="text" name="name" bind:value={$name} />
 		</label>
-		<button type="submit">Join</button>
+		<button disabled={$name.length < 2 || $name.length > 12} type="submit">Join</button>
 	</form>
 {:else}
 	<h1>{quiz?.name}</h1>
@@ -79,13 +78,7 @@
 
 {#if state === 'answering'}
 	<h2>Round: {round.name}</h2>
-	<form on:submit|preventDefault={() => sendAnswers()}>
-		{#each round.questions as q, i}
-			<p>{q}</p>
-			<input type="text" bind:value={answers[i]} />
-		{/each}
-		<button type="submit">send answers</button>
-	</form>
+	<AnswersForm questions={round.questions} on:submit={(answers) => sendAnswers(answers.detail)} />
 {/if}
 
 {#if state === 'revealing'}
