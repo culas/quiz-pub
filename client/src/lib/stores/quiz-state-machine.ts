@@ -99,7 +99,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		setAnswers: assign({ answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))] }),
 		reveal: assign({ answers: (ctx) => ctx.answers.map(a => ({ ...a, revealed: true })) }),
 		scoreAnswer: assign({
-			answers: (ctx, event) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === ctx.currentRound && a.player === event.player ? event.score : a.score }))
+			answers: (ctx, event) => ctx.answers.map(a => ({ ...a, score: a.questionId === event.qIdx && a.roundId === event.rIdx && a.player === event.player ? event.score : a.score }))
 		}),
 	}
 });

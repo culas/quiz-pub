@@ -29,6 +29,7 @@ export interface RevealEvent {
 
 export interface ScoreEvent {
   type: "SCORE";
+  rIdx: number;
   qIdx: number;
   player: string;
   score: number;

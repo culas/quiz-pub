@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { copy } from '$lib/actions/copy.action';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import SelectScore from '$lib/components/SelectScore.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
@@ -40,6 +41,10 @@
 			(acc, player) => (player && !acc.includes(player) ? acc.concat(player) : acc),
 			[] as { name: string; color: string }[]
 		);
+
+	function sendScore(score: number, rIdx: number, qIdx: number, player: string) {
+		send({ type: 'SCORE', score, rIdx, qIdx, player });
+	}
 </script>
 
 <h1>{$qService.context.name}</h1>
@@ -64,22 +69,14 @@
 			<button on:click={() => send('REVEAL')}>reveal</button>
 		{/if}
 		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
-			<p><b>Q{q.id + 1}: {q.text}</b></p>
+			<h3>Q{q.id + 1}: {q.text}</h3>
 			{#if $qService.matches('round.scoring')}
 				{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
 					<div class="answer">
-						<span>{a.player}</span>
-						<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
+						<b>{a.player}:</b>
 						<p>{a.text}</p>
 						{#if $qService.matches('round.scoring')}
-								<button
-								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
-								>1</button
-								>
-							<button
-								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
-								>0</button
-							>
+							<SelectScore score={a.score} on:change={(e) => sendScore(e.detail, q.roundId, q.id, a.player)} />
 						{/if}
 					</div>
 				{/each}
@@ -112,9 +109,6 @@
 
 	.answer p {
 		flex-grow: 1;
-	}
-
-	.answer button {
-		padding: 0 0.25rem;
+		margin-bottom: .5rem;
 	}
 </style>
