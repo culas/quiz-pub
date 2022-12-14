@@ -45,10 +45,11 @@ function reqHandler(req: Request) {
                 text: `No quiz with code ${joinCode} found`,
               }),
             );
-            //socket.close();
+            socket.close();
           };
         }
       }
+    // deno-lint-ignore no-explicit-any
     } catch (error: any) {
       return new Response(error?.message, { status: 400 });
     }

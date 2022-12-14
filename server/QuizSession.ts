@@ -35,7 +35,7 @@ export class QuizSession {
         this.broadcast(this.getQuizInfo());
       } else {
         this.players.forEach((player) => player.session.send(msg.data));
-		this.lastHostMessage = msg.data;
+        this.lastHostMessage = msg.data;
       }
     };
     socket.onclose = () => {
@@ -49,7 +49,8 @@ export class QuizSession {
   public addPlayer(socket: WebSocket) {
     const player = { session: socket, color: this.getPlayerColor() } as Player;
     this.players.push(player);
-    socket.onopen = () => this.lastHostMessage && socket.send(this.lastHostMessage);
+    socket.onopen = () =>
+      this.lastHostMessage && socket.send(this.lastHostMessage);
     socket.onmessage = (msg) => {
       const data = this.parse(msg);
       if (data.type === "join-quiz") {
