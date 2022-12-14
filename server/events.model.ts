@@ -3,7 +3,8 @@ export type StateEvent =
   | StartEvent
   | AnswerEvent
   | RevealEvent
-  | ScoreEvent;
+  | ScoreEvent
+  | ConfirmScoreEvent;
 
 export interface JoinEvent {
   type: "PLAYERS";
@@ -31,4 +32,8 @@ export interface ScoreEvent {
   qIdx: number;
   player: string;
   score: number;
+}
+
+export interface ConfirmScoreEvent {
+  type: 'CONFIRMSCORE';
 }

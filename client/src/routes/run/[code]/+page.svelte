@@ -61,7 +61,7 @@
 		{/if}
 		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
 			<p><b>Q{q.id + 1}: {q.text}</b></p>
-			{#if $qService.matches('round.scoring') || $qService.matches('round.scored')}
+			{#if $qService.matches('round.scoring')}
 				{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
 					<div class="answer">
 						<span>{a.player}</span>
@@ -81,6 +81,12 @@
 				{/each}
 			{/if}
 		{/each}
+		{#if $qService.matches('round.scoring')}
+			<button
+				disabled={$qService.context.answers.some((a) => a.score === undefined)}
+				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores</button
+			>
+		{/if}
 	{:else if $qService.matches('result')}
 		<h2>Scores</h2>
 		{#each $qService.context.players as player}

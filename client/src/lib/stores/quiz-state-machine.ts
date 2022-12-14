@@ -24,21 +24,21 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	states: {
 		lobby: {
 			on: {
-				PLAYERS: { target: 'lobby', actions: ['setPlayers', 'save'] },
+				PLAYERS: { target: 'lobby', actions: ['setPlayers'] },
 				START: [
-					{ target: 'round.starting', cond: 'quizReady', actions: ['send', 'save'] },
+					{ target: 'round.starting', cond: 'quizReady', actions: ['send'] },
 				]
 			},
 		},
 		round: {
 			states: {
 				starting: {
-					always: { target: 'answering', actions: ['sendRound', 'save'] },
+					always: { target: 'answering', actions: ['sendRound'] },
 				},
 				answering: {
 					on: {
 						ANSWER: [
-							{ target: 'answered', actions: ['setAnswers', 'send', 'save'] },
+							{ target: 'answered', actions: ['setAnswers', 'send'] },
 						]
 					},
 				},
@@ -51,20 +51,23 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'scoring', actions: ['reveal', 'send', 'save'] },
+							{ target: 'scoring', actions: ['reveal', 'send'] },
 						]
 					}
 				},
 				scoring: {
 					on: {
 						SCORE: [
-							{ target: 'scored', actions: ['scoreAnswer', 'send', 'save'] }
+							{ target: 'scoring', actions: ['scoreAnswer', 'send'] }
+						],
+						CONFIRMSCORE: [
+							{ target: 'scored' },
 						]
 					}
 				},
 				scored: {
 					always: [
-						{ target: 'finished', cond: 'answersScored', actions: ['nextRound', 'save'] },
+						{ target: 'finished', cond: 'answersScored', actions: ['nextRound'] },
 						{ target: 'scoring' }
 					]
 				},
@@ -78,8 +81,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		},
 		result: {
 			id: 'result',
-			type: 'final',
-			always: { actions: 'save' }
+			type: 'final'
 		}
 	}
 }, {
@@ -91,7 +93,6 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	},
 	actions: {
 		send: (_, event) => socket?.set(event),
-		save: () => console.log('save'),
 		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
