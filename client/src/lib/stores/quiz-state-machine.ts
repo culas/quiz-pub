@@ -38,7 +38,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				answering: {
 					on: {
 						ANSWER: [
-							{ target: 'answered', actions: ['setAnswers', 'send'] },
+							{ target: 'answered', actions: ['setAnswers'] },
 						]
 					},
 				},
