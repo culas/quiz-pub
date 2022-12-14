@@ -3,7 +3,7 @@ import Tooltip from '$lib/components/Tooltip.svelte';
 export const tooltip = (element: HTMLElement) => {
 
   let tooltipText: string | null;
-  let tooltipComponent: Tooltip;
+  let tooltipComponent: Tooltip | undefined;
 
   const addTooltip = () => {
     tooltipText = element.getAttribute('data-tooltip');
@@ -24,7 +24,7 @@ export const tooltip = (element: HTMLElement) => {
       const top = parentCoords.top + window.scrollY - i.offsetHeight - 10;
       const center = parentCoords.left + window.scrollX + (element.offsetWidth - i.offsetWidth) / 2;
 
-      tooltipComponent.$set({
+      tooltipComponent?.$set({
         xAxis: center,
         yAxis: top
       });
@@ -33,7 +33,7 @@ export const tooltip = (element: HTMLElement) => {
   }
 
   const removeTooltip = () => {
-    tooltipComponent.$destroy();
+    tooltipComponent?.$destroy();
   }
 
   element.addEventListener('mouseover', addTooltip);
