@@ -43,8 +43,8 @@
 			[] as { name: string; color: string }[]
 		);
 
-	function sendScore(score: { score: number; rIdx: number; qIdx: number; player: string }) {
-		send({ type: 'SCORE', ...score });
+	function sendScore(score: { score: number; qIdx: number; player: string }) {
+		send({ type: 'SCORE', ...score, rIdx: cr });
 	}
 </script>
 

@@ -11,8 +11,8 @@
 
 	const dispatch = createEventDispatcher();
 
-	function score(score: number, rIdx: number, qIdx: number, player: string) {
-		dispatch('score', { score, rIdx, qIdx, player });
+	function score(score: number, qIdx: number, player: string) {
+		dispatch('score', { score, qIdx, player });
 	}
 </script>
 
@@ -23,7 +23,7 @@
 			<b>{a.player}:</b>
 			<p>{censorAnswers ? '•••••' : a.text}</p>
 			{#if showScoring}
-				<SelectScore score={a.score} on:change={(e) => score(e.detail, 0, i, a.player)} />
+				<SelectScore score={a.score} on:change={(e) => score(e.detail, i, a.player)} />
 			{/if}
 			{#if showScores}
 				<span>{a.score}</span>
