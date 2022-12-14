@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import AnswersForm from '$lib/components/AnswersForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
-	import type { QuizRun } from '$lib/models/quiz-run.model';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
 	import type { QuizInfo, SocketMessage, StartRound } from '$server-interface/messages';
@@ -10,7 +9,7 @@
 
 	const name = writable($page.params.code, '');
 	const socket = connectSocket(new Map([['joinCode', $page.params.code]]));
-	let state: 'joining' | QuizRun['state'] = 'joining';
+	let state: 'joining' | 'preparation' | 'answering' | 'revealing' | 'scoring' = 'joining';
 
 	function join() {
 		$socket = { type: 'join-quiz', name: $name };
