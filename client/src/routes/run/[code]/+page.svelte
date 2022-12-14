@@ -5,7 +5,7 @@
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
-	import type { QuizState } from '$server-interface/messages';
+	import type { QuizState, SocketMessage } from '$server-interface/messages';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
@@ -24,10 +24,15 @@
 
 	$: cr = $qService.context.currentRound;
 
-	$: if ($socket && ($socket.type === 'PLAYERS' || $socket.type === 'ANSWER')) {
-		send($socket);
-		$state = $qService; // explicit save, as change detection is off with this flow
+	$: updateStateFromPlayerMessage($socket);
+
+	function updateStateFromPlayerMessage(socket: StateEvent | SocketMessage) {
+		if (socket && (socket.type === 'PLAYERS' || socket.type === 'ANSWER')) {
+			send(socket);
+			$state = $qService; // explicit save, as change detection is off with this flow
+		}
 	}
+
 	$: playersAnswered = $qService.context.answers
 		.filter((a) => a.roundId === cr)
 		.map((name) => $qService.context.players.find((p) => p.name === name.player))
@@ -50,7 +55,6 @@
 		</p>
 		<PlayerList players={$qService.context.players} />
 		<button on:click={() => send('START')}>start</button>
-		<p>answering</p>
 	{:else if $qService.matches('round')}
 		<h2>{$qService.context.rounds[cr].text}</h2>
 		{#if $qService.matches('round.answering')}
@@ -68,10 +72,10 @@
 						<span>{a.score !== undefined ? '(' + a.score + ')' : ''}</span>
 						<p>{a.text}</p>
 						{#if $qService.matches('round.scoring')}
-							<button
+								<button
 								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 1 })}
 								>1</button
-							>
+								>
 							<button
 								on:click={() => send({ type: 'SCORE', qIdx: q.id, player: a.player, score: 0 })}
 								>0</button
