@@ -2,8 +2,8 @@
 	import { page } from '$app/stores';
 	import { copy } from '$lib/actions/copy.action';
 	import { tooltip } from '$lib/actions/tooltip.action';
+	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
-	import SelectScore from '$lib/components/SelectScore.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
@@ -43,8 +43,8 @@
 			[] as { name: string; color: string }[]
 		);
 
-	function sendScore(score: number, rIdx: number, qIdx: number, player: string) {
-		send({ type: 'SCORE', score, rIdx, qIdx, player });
+	function sendScore(score: { score: number; rIdx: number; qIdx: number; player: string }) {
+		send({ type: 'SCORE', ...score });
 	}
 </script>
 
@@ -65,29 +65,29 @@
 		<h2>{$qService.context.rounds[cr].text}</h2>
 		{#if $qService.matches('round.answering')}
 			<PlayerList players={playersAnswered} />
+			{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
+				<h3>Q{q.id + 1}: {q.text}</h3>
+			{/each}
+		{/if}
+		{#if $qService.matches('round.scoring') || $qService.matches('round.revealing')}
+			<AnswersList
+				questions={$qService.context.questions.filter((q) => q.roundId === cr).map(q => q.text)}
+				answers={$qService.context.answers.filter((a) => a.roundId === cr)}
+				censorAnswers={$qService.matches('round.revealing')}
+				showScoring={$qService.matches('round.scoring')}
+				on:score={(e) => sendScore(e.detail)}
+			/>
+		{/if}
+		{#if $qService.matches('round.answering')}
+			<button
+				class="warn"
+				use:tooltip
+				data-tooltip="Will end the round without waiting for all answers!"
+				on:click={() => send({ type: 'SKIPANSWERS' })}>skip</button
+			>
 		{/if}
 		{#if $qService.matches('round.revealing')}
 			<button on:click={() => send('REVEAL')}>reveal</button>
-		{/if}
-		{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
-			<h3>Q{q.id + 1}: {q.text}</h3>
-			{#if $qService.matches('round.scoring')}
-				{#each $qService.context.answers.filter((a) => a.roundId === cr && a.questionId === q.id) as a}
-					<div class="answer">
-						<b>{a.player}:</b>
-						<p>{a.text}</p>
-						{#if $qService.matches('round.scoring')}
-							<SelectScore
-								score={a.score}
-								on:change={(e) => sendScore(e.detail, q.roundId, q.id, a.player)}
-							/>
-						{/if}
-					</div>
-				{/each}
-			{/if}
-		{/each}
-		{#if $qService.matches('round.answering')}
-			<button class="warn" use:tooltip data-tooltip="Will end the round without waiting for all answers!" on:click={() => send({ type: 'SKIPANSWERS' })}>skip</button>
 		{/if}
 		{#if $qService.matches('round.scoring')}
 			<button
@@ -108,14 +108,4 @@
 	{/if}
 </div>
 
-<style>
-	.answer {
-		display: flex;
-		gap: 0.5rem;
-	}
 
-	.answer p {
-		flex-grow: 1;
-		margin-bottom: 0.5rem;
-	}
-</style>

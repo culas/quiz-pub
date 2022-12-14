@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import AnswersForm from '$lib/components/AnswersForm.svelte';
+	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
-	import type { QuizInfo, SocketMessage, StartRound } from '$server-interface/messages';
+	import type { Answer, QuizInfo, SocketMessage, StartRound } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
 
 	const name = writable($page.params.code, '');
@@ -41,9 +42,10 @@
 				state = 'answering';
 				round = msg;
 				break;
+			case 'answers':
+				roundAnswers = msg.answers;
 			case 'end-round':
 			case 'SKIPANSWERS':
-			case 'REVEAL':
 				state = 'revealing';
 				break;
 			case 'score-answer':
@@ -52,6 +54,8 @@
 				break;
 		}
 	}
+
+	let roundAnswers: Answer[] = [];
 
 	function sendAnswers(answers: string[]) {
 		$socket = { type: 'ANSWER', player: $name, answers };
@@ -87,4 +91,8 @@
 
 {#if state === 'scoring'}
 	<p>Wait for host to score all answers</p>
+{/if}
+
+{#if state === 'revealing' || state == 'scoring'}
+	<AnswersList questions={round.questions} answers={roundAnswers} showScores={false} />
 {/if}

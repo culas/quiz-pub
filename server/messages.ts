@@ -6,21 +6,29 @@ export type SocketMessage =
 
 export type QuizStateMessage = { type: "quiz-state" } & QuizState;
 
+export interface Answer {
+  roundId: number;
+  questionId: number;
+  player: string;
+  text: string;
+  revealed: boolean;
+  score?: number;
+}
+
+export interface Question {
+  roundId: number;
+  id: number;
+  text: string;
+}
+
 export interface QuizState {
   name: string;
   joinCode: string;
   adminCode: string;
   players: { name: string; color: string }[];
   rounds: { id: number; text: string }[];
-  questions: { roundId: number; id: number; text: string }[];
-  answers: {
-    roundId: number;
-    questionId: number;
-    text: string;
-    player: string;
-    revealed: boolean;
-    score?: number;
-  }[];
+  questions: Question[];
+  answers: Answer[];
   currentRound: number;
 }
 
@@ -79,6 +87,6 @@ export interface JoinQuiz {
 
 export interface Answers {
   type: "answers";
-  player: string;
-  answers: string[];
+  roundName: string;
+  answers: Answer[];
 }
