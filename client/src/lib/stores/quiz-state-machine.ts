@@ -52,7 +52,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'scoring', actions: ['reveal', 'send'] },
+							{ target: 'scoring', actions: ['reveal', 'sendAnswers'] },
 						]
 					}
 				},
@@ -94,6 +94,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 	},
 	actions: {
 		send: (_, event) => socket?.set(event),
+		sendAnswers: ctx => socket?.set({ type: 'answers', roundName: ctx.rounds[ctx.currentRound].text, answers: ctx.answers}),
 		setPlayers: assign({ players: (_, event) => event.players }),
 		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
