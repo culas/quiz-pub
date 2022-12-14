@@ -24,11 +24,30 @@ function reqHandler(req: Request) {
           }
         } else {
           console.log("creating session");
-          sessions.set(joinCode, new QuizSession(adminCode, joinCode, socket));
+          const quizSession = new QuizSession(adminCode, joinCode, socket);
+          sessions.set(joinCode, quizSession);
+          quizSession.onClose = () => {
+            console.log("closing: ", joinCode);
+            sessions.delete(joinCode);
+          };
         }
       } else if (joinCode) {
-        console.log("connecting player");
-        sessions.get(joinCode)?.addPlayer(socket);
+        const quizSession = sessions.get(joinCode);
+        if (quizSession) {
+          console.log("connecting player");
+          quizSession.addPlayer(socket);
+        } else {
+          console.log("session does not exist");
+          socket.onopen = () => {
+            socket.send(
+              JSON.stringify({
+                type: "MESSAGE",
+                text: `No quiz with code ${joinCode} found`,
+              }),
+            );
+            //socket.close();
+          };
+        }
       }
     } catch (error: any) {
       return new Response(error?.message, { status: 400 });

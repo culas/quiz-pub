@@ -13,6 +13,7 @@ export class QuizSession {
   public questions = 0;
   public rounds = 0;
   public host?: WebSocket;
+  public onClose?: () => void;
 
   constructor(
     public adminCode: string,
@@ -35,7 +36,12 @@ export class QuizSession {
         this.players.forEach((player) => player.session.send(msg.data));
       }
     };
-    socket.onclose = () => this.host = undefined;
+    socket.onclose = () => {
+      this.host = undefined;
+      if (this.hasSessionEnded()) {
+        this.onClose?.();
+      }
+    };
   }
 
   public addPlayer(socket: WebSocket) {
@@ -53,7 +59,11 @@ export class QuizSession {
     };
     socket.onclose = () => {
       this.players = this.players.filter((p) => p.name !== player.name);
-      this.broadcastPlayers();
+      if (this.hasSessionEnded()) {
+        this.onClose?.();
+      } else {
+        this.broadcastPlayers();
+      }
     };
   }
 
@@ -89,6 +99,10 @@ export class QuizSession {
         color: p.color,
       })),
     };
+  }
+
+  private hasSessionEnded(): boolean {
+    return this.host === undefined && this.players.length === 0;
   }
 
   private parse<T extends SocketMessage | StateEvent>(
