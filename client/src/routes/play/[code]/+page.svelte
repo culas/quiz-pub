@@ -41,6 +41,7 @@
 			case 'start-round':
 				state = 'answering';
 				round = msg;
+				roundAnswers = [];
 				break;
 			case 'answers':
 				roundAnswers = msg.answers;
