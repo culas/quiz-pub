@@ -76,7 +76,11 @@ button:disabled {
 }
 
 h1, h2, h3, h4 {
-	margin: 0;
+	margin: .5em 0;
+}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child {
+	margin-top: 0;
 }
 
 label {
@@ -96,5 +100,5 @@ section.disabled {
 }
 
 p {
-	margin: 0;
+	margin: 0 0 .2em 0;
 }
