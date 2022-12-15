@@ -36,17 +36,17 @@
 		}
 	}
 
-	$: playersAnswered = $qService.context.answers
-		.filter((a) => a.roundId === cr)
-		.map((name) => $qService.context.players.find((p) => p.name === name.player))
-		.reduce(
-			(acc, player) => (player && !acc.includes(player) ? acc.concat(player) : acc),
-			[] as { name: string; color: string }[]
-		);
-
 	function sendScore(score: { score: number; qIdx: number; player: string }) {
 		send({ type: 'SCORE', ...score, rIdx: cr });
 	}
+
+	$: waitingForPlayers = $qService.context.players.filter(
+		(p) =>
+			!$qService.context.answers
+				.filter((a) => a.roundId === cr)
+				.map((a) => a.player)
+				.includes(p.name)
+	);
 </script>
 
 <h1>{$qService.context.name}</h1>
@@ -86,6 +86,10 @@
 				data-tooltip="Will end the round without waiting for all answers!"
 				on:click={() => send({ type: 'SKIPANSWERS' })}>skip</button
 			>
+			<span
+				>waiting for <b>{waitingForPlayers.length}</b>
+				{waitingForPlayers.length === 1 ? 'player' : 'players'} to submit their answers</span
+			>
 		{/if}
 		{#if $qService.matches('round.revealing')}
 			<button on:click={() => send('REVEAL')}>reveal</button>
@@ -98,6 +102,6 @@
 		{/if}
 	{:else if $qService.matches('result')}
 		<h2>Scores</h2>
-		<Standings answers={$qService.context.answers} rounds={$qService.context.rounds}></Standings>
+		<Standings answers={$qService.context.answers} rounds={$qService.context.rounds} />
 	{/if}
 </div>
