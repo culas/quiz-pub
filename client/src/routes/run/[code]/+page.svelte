@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { copy } from '$lib/actions/copy.action';
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
-	import Standings from '$lib/components/Standings.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
@@ -12,6 +10,8 @@
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
+	import Lobby from './Lobby.svelte';
+	import Result from './Result.svelte';
 
 	const state = writable($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
 
@@ -55,29 +55,13 @@
 
 <div>
 	{#if $qService.matches('lobby')}
-		<p>
-			Invite players with code: <b
-				use:copy={location.protocol + location.host + '/play/' + $qService.context.joinCode}
-				>{$qService.context.joinCode}</b
-			>
-			(click code to copy invite link)
-		</p>
-		<button on:click={() => send('START')}>start</button>
+		<Lobby state={$qService.context} on:start={() => send('START')} />
 	{:else if $qService.matches('round')}
-		<h2>{$qService.context.rounds[cr].text}</h2>
-		{#if $qService.matches('round.answering')}
+		<h2>Round {cr + 1}: {$qService.context.rounds[cr].text}</h2>
+		{#if $qService.matches('round.answering') || $qService.matches('round.revealing')}
 			{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
-				<h3>Q{q.id + 1}: {q.text}</h3>
+				<h3>{q.id + 1}) {q.text}</h3>
 			{/each}
-		{/if}
-		{#if $qService.matches('round.scoring') || $qService.matches('round.revealing')}
-			<AnswersList
-				questions={$qService.context.questions.filter((q) => q.roundId === cr).map((q) => q.text)}
-				answers={$qService.context.answers.filter((a) => a.roundId === cr)}
-				censorAnswers={$qService.matches('round.revealing')}
-				showScoring={$qService.matches('round.scoring')}
-				on:score={(e) => sendScore(e.detail)}
-			/>
 		{/if}
 		{#if $qService.matches('round.answering')}
 			<button
@@ -92,16 +76,22 @@
 			>
 		{/if}
 		{#if $qService.matches('round.revealing')}
-			<button on:click={() => send('REVEAL')}>reveal</button>
+			<button on:click={() => send('REVEAL')}>reveal answers</button>
 		{/if}
 		{#if $qService.matches('round.scoring')}
+			<AnswersList
+				questions={$qService.context.questions.filter((q) => q.roundId === cr).map((q) => q.text)}
+				answers={$qService.context.answers.filter((a) => a.roundId === cr)}
+				censorAnswers={$qService.matches('round.revealing')}
+				showScoring={$qService.matches('round.scoring')}
+				on:score={(e) => sendScore(e.detail)}
+			/>
 			<button
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}
 				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores</button
 			>
 		{/if}
 	{:else if $qService.matches('result')}
-		<h2>Scores</h2>
-		<Standings answers={$qService.context.answers} rounds={$qService.context.rounds} />
+		<Result state={$qService.context} />
 	{/if}
 </div>
