@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let color: string = '';
+	export let color: string = 'var(--color-primary)';
 </script>
 
 <span><i style="background-color: {color}" /><slot /></span>

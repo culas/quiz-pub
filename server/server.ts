@@ -49,7 +49,7 @@ function reqHandler(req: Request) {
           };
         }
       }
-    // deno-lint-ignore no-explicit-any
+      // deno-lint-ignore no-explicit-any
     } catch (error: any) {
       return new Response(error?.message, { status: 400 });
     }

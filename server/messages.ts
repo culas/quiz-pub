@@ -25,7 +25,7 @@ export interface QuizState {
   name: string;
   joinCode: string;
   adminCode: string;
-  players: { name: string; color: string }[];
+  players: { name: string; color?: string }[];
   rounds: { id: number; text: string }[];
   questions: Question[];
   answers: Answer[];
@@ -48,7 +48,7 @@ export interface QuizInfo {
   name: string;
   rounds: number;
   questions: number;
-  players: { name: string; color: string }[];
+  players: { name: string, color?: string }[];
 }
 
 // from server
@@ -56,7 +56,7 @@ export type ServerMessage = Players;
 
 export interface Players {
   type: "players";
-  players: { name: string; color: string }[];
+  players: { name: string; color?: string }[];
 }
 
 // from host to players (via server ofc)

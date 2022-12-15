@@ -4,7 +4,6 @@ import { HostMessage, QuizInfo, SocketMessage } from "./messages.ts";
 interface Player {
   session: WebSocket;
   name?: string;
-  color: string;
 }
 
 export class QuizSession {
@@ -74,9 +73,8 @@ export class QuizSession {
   private broadcastPlayers() {
     this.broadcast({
       type: "PLAYERS",
-      players: this.players.map(({ name, color }) => ({
+      players: this.players.map(({ name }) => ({
         name: name ?? "noname",
-        color,
       })),
     });
   }
@@ -88,7 +86,7 @@ export class QuizSession {
   }
 
   private getPlayerColor(): string {
-	  return 'var(--color-primary)';
+    return "var(--color-primary)";
   }
 
   private getQuizInfo(): QuizInfo {
@@ -97,9 +95,8 @@ export class QuizSession {
       name: this.name,
       rounds: this.rounds,
       questions: this.questions,
-      players: this.players.map((p) => ({
-        name: p.name ?? "",
-        color: p.color,
+      players: this.players.map(({ name }) => ({
+        name: name ?? "",
       })),
     };
   }

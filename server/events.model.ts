@@ -9,7 +9,7 @@ export type StateEvent =
 
 export interface JoinEvent {
   type: "PLAYERS";
-  players: { name: string; color: string }[];
+  players: { name: string }[];
 }
 
 export interface StartEvent {
@@ -41,5 +41,5 @@ export interface ScoreEvent {
 }
 
 export interface ConfirmScoreEvent {
-  type: 'CONFIRMSCORE';
+  type: "CONFIRMSCORE";
 }
