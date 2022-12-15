@@ -2,7 +2,6 @@
 	import type { Answer } from '$server-interface/messages';
 	export let answers: Answer[] = [];
 	export let rounds: { id: number; text: string }[] = [];
-	$: console.log(rounds);
 	$: players = answers.map((a) => a.player).reduce((acc, p) => acc.add(p), new Set());
 	$: scores = [...players]
 		.map((p) => ({

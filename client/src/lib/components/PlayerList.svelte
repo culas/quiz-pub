@@ -7,7 +7,7 @@
 </script>
 
 <div class:collapse>
-	<b on:click={() => (collapse = !collapse)}>Players</b>
+	<b on:click={() => (collapse = !collapse)}>Players ({players.length})</b>
 	{#if players && players.length > 0}
 		{#each players as p}
 			<ColorPill color={p.color}>{p.name}</ColorPill>
@@ -22,7 +22,7 @@
 		--base: 0.25rem;
 		display: flex;
 		gap: var(--base);
-		margin: var(--base) 0;
+		margin: calc(var(--base) * 2) 0;
 		line-height: calc(var(--base) * 6);
 		flex-wrap: wrap;
 		overflow: hidden;

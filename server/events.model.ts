@@ -28,8 +28,6 @@ export interface SkipAnswersEvent {
 
 export interface RevealEvent {
   type: "REVEAL";
-  qIdx: number;
-  player: string;
 }
 
 export interface ScoreEvent {
