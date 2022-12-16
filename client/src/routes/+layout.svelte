@@ -1,10 +1,12 @@
 <script>
+	import DarkmodeToggle from '$lib/components/DarkmodeToggle.svelte';
 	import Navigation from '$lib/components/Navigation.svelte';
 </script>
 
 <header>
 	<a href="/">QuizPub</a>
 	<Navigation />
+	<DarkmodeToggle />
 </header>
 
 <main>
@@ -28,6 +30,12 @@
 		background-color: var(--color-light);
 	}
 
+	header {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+
 	footer {
 		font-size: 0.75rem;
 	}
@@ -35,6 +43,7 @@
 	a {
 		color: var(--color-text);
 		text-decoration: none;
+		font-size: 1.2rem;
 		font-weight: bold;
 	}
 </style>

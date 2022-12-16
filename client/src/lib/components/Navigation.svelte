@@ -15,12 +15,12 @@
 
 <style>
 	nav {
-		display: inline-block;
+		flex-grow: 1;
 	}
 
 	ul {
 		list-style: none;
-		margin: 0 1rem;
+		margin: 0;
 		padding: 0;
 		display: flex;
 		gap: 1rem;

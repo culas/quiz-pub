@@ -10,7 +10,7 @@
 
 <style>
 	.tooltip {
-		color: var(--color-white);
+		color: white;
 		min-width: 80px;
 		max-width: 250px;
 		position: absolute;

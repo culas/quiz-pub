@@ -11,6 +11,18 @@
 	--box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+body.dark {
+	--color-dark: #e2e8f0;
+	--color-primary: #3b82f6;
+	--color-lighter: #334155;
+	--color-light: #1e293b;
+	--color-white: #0f172a;
+	--color-warning: #b91c1c;
+	--color-text: var(--color-dark);
+	--color-text-button: var(--color-white);
+	--color-background: var(--color-lighter);
+}
+
 *,
 *::before,
 ::after {
@@ -45,6 +57,7 @@ button,
 
 input {
 	width: 100%;
+	color: var(--color-text);
 	border: 2px solid var(--color-light);
 	background-color: var(--color-white);
 	outline: none;
