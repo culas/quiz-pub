@@ -2,6 +2,8 @@
 	import type { Answer } from '$server-interface/messages';
 	export let answers: Answer[] = [];
 	export let rounds: { id: number; text: string }[] = [];
+	export let player: string = '';
+
 	$: players = answers.map((a) => a.player).reduce((acc, p) => acc.add(p), new Set());
 	$: scores = [...players]
 		.map((p) => ({
@@ -29,14 +31,14 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each scores as player, i}
-			<tr>
+		{#each scores as score, i}
+			<tr class:highlight={score.player === player}>
 				<td>{i + 1}</td>
-				<td>{player.player}</td>
-				{#each player.rounds as round}
+				<td>{score.player}</td>
+				{#each score.rounds as round}
 					<td class="right">{round}</td>
 				{/each}
-				<td class="right"><b>{player.scores}</b></td>
+				<td class="right"><b>{score.scores}</b></td>
 			</tr>
 		{/each}
 	</tbody>
@@ -51,6 +53,11 @@
 	thead tr,
 	tbody tr:hover {
 		background-color: var(--color-light);
+	}
+
+	tr.highlight {
+		color: var(--color-primary);
+		font-weight: bold;
 	}
 
 	th {

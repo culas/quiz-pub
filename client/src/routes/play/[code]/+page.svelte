@@ -52,7 +52,7 @@
 		</p>
 	{:else if quizState.done}
 		<h2>Final Scores</h2>
-		<Standings rounds={quizState.rounds} answers={quizState.answers} />
+		<Standings rounds={quizState.rounds} answers={quizState.answers} player={$name} />
 	{:else if !quizState.players.some((p) => p.name === $name)}
 		<NameForm on:submit={(e) => join(e.detail)} />
 	{:else if quizState.lastEvent === 'PLAYERS'}
