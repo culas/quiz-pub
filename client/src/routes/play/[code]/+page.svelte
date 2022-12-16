@@ -2,13 +2,13 @@
 	import { page } from '$app/stores';
 	import AnswersForm from '$lib/components/AnswersForm.svelte';
 	import AnswersList from '$lib/components/AnswersList.svelte';
+	import NameForm from '$lib/components/NameForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import Standings from '$lib/components/Standings.svelte';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinQuiz } from '$server-interface/events.model';
 	import type { QuizStateMessage } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
-	import NameForm from './NameForm.svelte';
 
 	const name = writable($page.params.code, '');
 	const socket = connectSocket<QuizStateMessage | JoinQuiz | AnswerEvent>(
