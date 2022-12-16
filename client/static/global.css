@@ -53,14 +53,18 @@ button,
 .button {
 	border-radius: 0.25rem;
 	padding: 0.5rem;
+	font-family: inherit;
+	font-size: 1rem;
 }
 
 input {
 	width: 100%;
+	padding: 0.25rem;
 	color: var(--color-text);
 	border: 2px solid var(--color-light);
 	background-color: var(--color-white);
 	outline: none;
+	line-height: 1.5rem;
 }
 
 input:focus {
@@ -71,8 +75,8 @@ button,
 .button {
 	display: inline-block;
 	text-decoration: none;
-	font-size: inherit;
 	font-weight: bold;
+	line-height: 1.25rem;
 	border: none;
 	color: var(--color-text-button);
 	background-color: var(--color-primary);
@@ -80,7 +84,7 @@ button,
 	cursor: pointer;
 	margin: 0;
 	box-shadow: var(--box-shadow);
-	transition: box-shadow .1s ease-in-out, background-color .1s ease-in-out;
+	transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
 }
 
 button:hover,
@@ -88,7 +92,7 @@ button:active,
 .button:hover,
 .button:active {
 	background-color: var(--color-dark);
-	box-shadow: 0px 3px 8px rgba(0, 0, 0, .3);
+	box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 button:disabled {

@@ -27,5 +27,6 @@
 	button {
 		padding: 0 0.25rem;
 		background-color: var(--color-dark);
+		line-height: 1.5rem;
 	}
 </style>
