@@ -13,7 +13,7 @@
 	<slot />
 </main>
 
-<footer>QuizPub prototype to create and run pub quiz style events, by celep for Fishcord</footer>
+<footer>QuizPub: create, run and play pub quiz style events • by celep for Fishcord • <a href="https://github.com/culas/quiz-pub">GitHub</a></footer>
 
 <style>
 	main {
@@ -40,7 +40,7 @@
 		font-size: 0.75rem;
 	}
 
-	a {
+	header a {
 		color: var(--color-text);
 		text-decoration: none;
 		font-size: 1.2rem;
