@@ -5,6 +5,9 @@
 <nav>
 	<ul>
 		<li>
+			<a href="/play" class:active={$page.url.pathname.includes('play')}>play</a>
+		</li>
+		<li>
 			<a href="/edit" class:active={$page.url.pathname.includes('edit')}>create</a>
 		</li>
 		<li>
