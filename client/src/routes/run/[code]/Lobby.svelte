@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { copy } from '$lib/actions/copy.action';
 	import { tooltip } from '$lib/actions/tooltip.action';
-	import type { QuizState } from '$server-interface/messages';
+	import type { QuizState } from '$lib/models/quiz-state.model';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: QuizState;

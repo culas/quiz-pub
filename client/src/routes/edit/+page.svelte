@@ -54,13 +54,13 @@
 		<p>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</p>
 		<p>Last save: {new Date(save.date).toLocaleString()}</p>
 		<div>
-		{#if save.deleted}
-			<button on:click={() => restoreQuiz(save.id)}>restore</button>
-		{:else}
-			<a class="button" href="edit/{save.id}">edit</a>
-			<button on:click={() => runQuiz(save)}>run</button>
-			<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
-		{/if}
+			{#if save.deleted}
+				<button on:click={() => restoreQuiz(save.id)}>restore</button>
+			{:else}
+				<a class="button" href="edit/{save.id}">edit</a>
+				<button on:click={() => runQuiz(save)}>run</button>
+				<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
+			{/if}
 		</div>
 	</section>
 {/each}
@@ -72,6 +72,6 @@
 <style>
 	div {
 		display: flex;
-		gap: .5rem;
+		gap: 0.5rem;
 	}
 </style>

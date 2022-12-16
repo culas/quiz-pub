@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { Answer } from '$server-interface/messages';
+	import type { Answer, Round } from '$lib/models/quiz-state.model';
+
 	export let answers: Answer[] = [];
-	export let rounds: { id: number; text: string }[] = [];
+	export let rounds: Round[] = [];
 	export let player: string = '';
 
 	$: players = answers.map((a) => a.player).reduce((acc, p) => acc.add(p), new Set());

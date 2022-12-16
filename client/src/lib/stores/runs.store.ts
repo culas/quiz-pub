@@ -1,5 +1,5 @@
+import type { QuizState } from '$lib/models/quiz-state.model';
 import type { StateEvent } from '$server-interface/events.model';
-import type { QuizState } from '$server-interface/messages';
 import { writable } from 'svelte-local-storage-store';
 import { derived, get, type Readable, type Writable } from 'svelte/store';
 import type { State } from 'xstate';

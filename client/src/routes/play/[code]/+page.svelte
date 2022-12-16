@@ -5,9 +5,9 @@
 	import NameForm from '$lib/components/NameForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import Standings from '$lib/components/Standings.svelte';
+	import type { QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinQuiz } from '$server-interface/events.model';
-	import type { QuizStateMessage } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
 
 	const name = writable($page.params.code, '');

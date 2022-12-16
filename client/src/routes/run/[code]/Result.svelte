@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Standings from '$lib/components/Standings.svelte';
-	import type { QuizState } from '$server-interface/messages';
+	import type { QuizState } from '$lib/models/quiz-state.model';
 
 	export let state: QuizState;
 </script>

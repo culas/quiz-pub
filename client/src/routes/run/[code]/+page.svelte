@@ -3,10 +3,10 @@
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import type { QuizState, QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, PlayersEvent, StateEvent } from '$server-interface/events.model';
-	import type { QuizState, QuizStateMessage } from '$server-interface/messages';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';

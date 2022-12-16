@@ -14,23 +14,23 @@ export interface QuizState {
 	currentRound: number;
 }
 
-interface Player {
+export interface Player {
 	name: string;
 	color?: string;
 }
 
-interface Round {
+export interface Round {
 	id: number;
 	text: string;
 }
 
-interface Question {
+export interface Question {
 	roundId: number;
 	id: number;
 	text: string;
 }
 
-interface Answer {
+export interface Answer {
 	roundId: number;
 	questionId: number;
 	player: string;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Answer } from '$server-interface/messages';
+	import type { Answer } from '$lib/models/quiz-state.model';
 	import { createEventDispatcher } from 'svelte';
 	import SelectScore from './SelectScore.svelte';
 

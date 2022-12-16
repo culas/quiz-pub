@@ -1,5 +1,5 @@
+import type { QuizState } from '$lib/models/quiz-state.model';
 import type { StateEvent } from '$server-interface/events.model';
-import type { QuizState } from '$server-interface/messages';
 import { assign, createMachine } from 'xstate';
 
 export const quizMachine = () =>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Player } from '$server-interface/messages';
+	import type { Player } from '$lib/models/quiz-state.model';
 	import ColorPill from './ColorPill.svelte';
 
 	export let players: Player[] = [];
@@ -7,6 +7,7 @@
 </script>
 
 <div class:collapse>
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<b on:click={() => (collapse = !collapse)}>Players ({players.length})</b>
 	{#if players && players.length > 0}
 		{#each players as p}
