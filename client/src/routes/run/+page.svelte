@@ -2,7 +2,10 @@
 	import { runs } from '$lib/stores/runs.store';
 
 	$: showFinished = false;
-	$: quizzes = $runs.filter((r) => !r.done || showFinished).map((r) => r).sort(r => r.done ? 1 : -1);
+	$: quizzes = $runs
+		.filter((r) => !r.done || showFinished)
+		.map((r) => r)
+		.sort((r) => (r.done ? 1 : -1));
 </script>
 
 <h1>Quiz Runs</h1>

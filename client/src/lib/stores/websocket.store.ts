@@ -21,9 +21,7 @@ export function websocketStore<T>(url: URL): Omit<Writable<T>, 'update'> {
 	function reopenTimeout() {
 		const n = reopenCount;
 		reopenCount++;
-		return reopenTimeouts[
-			n >= reopenTimeouts.length - 1 ? reopenTimeouts.length - 1 : n
-		];
+		return reopenTimeouts[n >= reopenTimeouts.length - 1 ? reopenTimeouts.length - 1 : n];
 	}
 
 	function close() {
@@ -57,9 +55,9 @@ export function websocketStore<T>(url: URL): Omit<Writable<T>, 'update'> {
 
 		socket = new WebSocket(url);
 
-		socket.onmessage = event => {
+		socket.onmessage = (event) => {
 			const val = JSON.parse(event.data);
-			subscriptions.forEach(subscription => subscription(val));
+			subscriptions.forEach((subscription) => subscription(val));
 		};
 
 		// TODO: enable
@@ -70,7 +68,7 @@ export function websocketStore<T>(url: URL): Omit<Writable<T>, 'update'> {
 				reject('socket closed');
 				return;
 			}
-			socket.onerror = error => {
+			socket.onerror = (error) => {
 				reject(error);
 				openPromise = undefined;
 			};

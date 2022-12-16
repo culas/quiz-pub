@@ -12,7 +12,7 @@ const config = {
 		alias: {
 			'$server-interface': '../server/'
 		},
-		prerender: { entries: [] },
+		prerender: { entries: [] }
 	}
 };
 

@@ -18,6 +18,6 @@ export const copy = (element: HTMLElement, text?: string) => {
 		},
 		destroy: () => {
 			element.removeEventListener('click', handle, true);
-		},
+		}
 	};
 };

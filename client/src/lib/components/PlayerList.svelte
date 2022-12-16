@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Players } from '$server-interface/messages';
+	import type { Player } from '$server-interface/messages';
 	import ColorPill from './ColorPill.svelte';
 
-	export let players: Players['players'] = [];
+	export let players: Player[] = [];
 	let collapse = false;
 </script>
 

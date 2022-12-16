@@ -5,8 +5,8 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
-	import type { StateEvent } from '$server-interface/events.model';
-	import type { QuizState, QuizStateMessage, SocketMessage } from '$server-interface/messages';
+	import type { AnswerEvent, PlayersEvent, StateEvent } from '$server-interface/events.model';
+	import type { QuizState, QuizStateMessage } from '$server-interface/messages';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
@@ -15,7 +15,7 @@
 
 	const state = writable($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
 
-	const socket = connectSocket(
+	const socket = connectSocket<QuizStateMessage | PlayersEvent | AnswerEvent>(
 		new Map([
 			['joinCode', $state.context.joinCode],
 			['adminCode', $state.context.adminCode]
@@ -29,14 +29,14 @@
 		{ adminCode, ...state }: QuizState,
 		{ type }: StateEvent,
 		done: boolean = false
-	): QuizStateMessage & { lastEvent: string; done: boolean } {
+	): QuizStateMessage {
 		return {
 			...state,
 			done,
 			rounds: state.rounds.filter((r) => r.id <= state.currentRound),
 			questions: state.questions.filter((q) => q.roundId <= state.currentRound),
 			answers: state.answers.map((a) => (a.revealed ? a : { ...a, text: '' })),
-			type: 'quiz-state',
+			type: 'QUIZSTATE',
 			lastEvent: type
 		};
 	}
@@ -45,7 +45,7 @@
 
 	$: updateStateFromPlayerMessage($socket);
 
-	function updateStateFromPlayerMessage(socket: StateEvent | SocketMessage) {
+	function updateStateFromPlayerMessage(socket: QuizStateMessage | PlayersEvent | AnswerEvent) {
 		if (socket && (socket.type === 'PLAYERS' || socket.type === 'ANSWER')) {
 			send(socket);
 			$state = $qService; // explicit save, as change detection is off with this flow

@@ -1,5 +1,5 @@
 export type StateEvent =
-  | JoinEvent
+  | PlayersEvent
   | StartEvent
   | AnswerEvent
   | SkipAnswersEvent
@@ -7,7 +7,7 @@ export type StateEvent =
   | ScoreEvent
   | ConfirmScoreEvent;
 
-export interface JoinEvent {
+export interface PlayersEvent {
   type: "PLAYERS";
   players: { name: string }[];
 }
@@ -40,4 +40,10 @@ export interface ScoreEvent {
 
 export interface ConfirmScoreEvent {
   type: "CONFIRMSCORE";
+}
+
+// not technically a state event but a msg from player to server
+export interface JoinQuiz {
+  type: "JOIN";
+  name: string;
 }

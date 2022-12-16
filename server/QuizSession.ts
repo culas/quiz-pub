@@ -1,5 +1,4 @@
-import { StateEvent } from "./events.model.ts";
-import { SocketMessage } from "./messages.ts";
+import { AnswerEvent, JoinQuiz } from "./events.model.ts";
 
 interface Player {
   session: WebSocket;
@@ -37,13 +36,12 @@ export class QuizSession {
   public addPlayer(socket: WebSocket) {
     const player = { session: socket, color: 'var(--color-primary)' } as Player;
     this.players.push(player);
-    socket.onopen = () =>
-      this.lastHostMessage && socket.send(this.lastHostMessage);
+    socket.onopen = () => this.lastHostMessage && socket.send(this.lastHostMessage);
     socket.onmessage = (msg) => {
-      const data = this.parse(msg);
-      if (data.type === "join-quiz") {
+      const data: JoinQuiz | AnswerEvent = JSON.parse(msg.data);
+      if (data.type === "JOIN") {
         player.name = data.name;
-        this.broadcastPlayers();
+        this.sendPlayersToHost();
       } else if (data.type === "ANSWER") {
         this.host?.send(msg.data);
       }
@@ -53,33 +51,19 @@ export class QuizSession {
       if (this.hasSessionEnded()) {
         this.onClose?.();
       } else {
-        this.broadcastPlayers();
+        this.sendPlayersToHost();
       }
     };
   }
 
-  private broadcastPlayers() {
-    this.broadcast({
+  private sendPlayersToHost() {
+    this.host?.send(JSON.stringify({
       type: "PLAYERS",
-      players: this.players.map(({ name }) => ({
-        name: name ?? "noname",
-      })),
-    });
-  }
-
-  private broadcast(msg: SocketMessage | StateEvent) {
-    const message = JSON.stringify(msg);
-    this.host?.send(message);
-    this.players.forEach((p) => p.session.send(message));
+      players: this.players.map(({ name }) => ({ name: name ?? "noname" })),
+    }));
   }
 
   private hasSessionEnded(): boolean {
     return this.host === undefined && this.players.length === 0;
-  }
-
-  private parse<T extends SocketMessage | StateEvent>(
-    msg: MessageEvent<string>,
-  ): T {
-    return JSON.parse(msg.data);
   }
 }

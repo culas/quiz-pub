@@ -5,29 +5,29 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import Standings from '$lib/components/Standings.svelte';
 	import { connectSocket } from '$lib/utils/websocket';
-	import type { StateEvent } from '$server-interface/events.model';
-	import type { QuizStateMessage, SocketMessage } from '$server-interface/messages';
+	import type { AnswerEvent, JoinQuiz } from '$server-interface/events.model';
+	import type { QuizStateMessage } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
 	import NameForm from './NameForm.svelte';
 
 	const name = writable($page.params.code, '');
-	const socket = connectSocket(new Map([['joinCode', $page.params.code]]));
+	const socket = connectSocket<QuizStateMessage | JoinQuiz | AnswerEvent>(
+		new Map([['joinCode', $page.params.code]])
+	);
 
 	function join(newName?: string) {
 		if (newName) {
 			$name = newName;
-			$socket = { type: 'join-quiz', name: newName };
+			$socket = { type: 'JOIN', name: newName };
 		}
 	}
 	join($name);
 
 	$: updateQuiz($socket);
 
-	let quizState: QuizStateMessage & { lastEvent: string; done: boolean };
-	function updateQuiz(
-		msg: SocketMessage | StateEvent | (QuizStateMessage & { lastEvent: string; done: boolean })
-	) {
-		if (msg?.type === 'quiz-state' && 'done' in msg) {
+	let quizState: QuizStateMessage;
+	function updateQuiz(msg: QuizStateMessage | JoinQuiz | AnswerEvent) {
+		if (msg?.type === 'QUIZSTATE' && 'done' in msg) {
 			quizState = { ...msg };
 		}
 	}
@@ -43,7 +43,7 @@
 		.map((q) => q.text);
 </script>
 
-<h1>{quizState?.name}</h1>
+<h1>{quizState?.name ?? 'Quiz'}</h1>
 <PlayerList players={quizState?.players} />
 <div>
 	{#if quizState === undefined}
