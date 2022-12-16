@@ -14,7 +14,7 @@
 	<b
 		use:tooltip
 		data-tooltip="click to copy"
-		use:copy={location.protocol + location.host + '/play/' + state.joinCode}>{state.joinCode}</b
+		use:copy={location.origin + '/play/' + state.joinCode}>{state.joinCode}</b
 	>
 </p>
 
