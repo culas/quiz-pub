@@ -6,7 +6,7 @@
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
-	import type { QuizState, SocketMessage } from '$server-interface/messages';
+	import type { QuizState, QuizStateMessage, SocketMessage } from '$server-interface/messages';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
@@ -22,8 +22,24 @@
 		])
 	);
 
-	const { state: qService, send } = useMachine(quizMachine(socket), { state: $state });
+	const { state: qService, send } = useMachine(quizMachine(), { state: $state });
 	$: $state = $qService;
+
+	function createQuizStateMessage(
+		{ adminCode, ...state }: QuizState,
+		{ type }: StateEvent,
+		done: boolean = false
+	): QuizStateMessage & { lastEvent: string; done: boolean } {
+		return {
+			...state,
+			done,
+			rounds: state.rounds.filter((r) => r.id <= state.currentRound),
+			questions: state.questions.filter((q) => q.roundId <= state.currentRound),
+			answers: state.answers.map((a) => (a.revealed ? a : { ...a, text: '' })),
+			type: 'quiz-state',
+			lastEvent: type
+		};
+	}
 
 	$: cr = $qService.context.currentRound;
 
@@ -36,8 +52,9 @@
 		}
 	}
 
-	function sendScore(score: { score: number; qIdx: number; player: string }) {
-		send({ type: 'SCORE', ...score, rIdx: cr });
+	$: sendQuizStateToPlayers($state);
+	function sendQuizStateToPlayers(state: State<QuizState, StateEvent>) {
+		$socket = createQuizStateMessage(state.context, state.event, state.done);
 	}
 
 	$: waitingForPlayers = $qService.context.players.filter(
@@ -84,7 +101,7 @@
 				answers={$qService.context.answers.filter((a) => a.roundId === cr)}
 				censorAnswers={$qService.matches('round.revealing')}
 				showScoring={$qService.matches('round.scoring')}
-				on:score={(e) => sendScore(e.detail)}
+				on:score={(e) => send({ type: 'SCORE', ...e.detail, rIdx: cr })}
 			/>
 			<button
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}

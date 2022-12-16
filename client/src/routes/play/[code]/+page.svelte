@@ -3,97 +3,77 @@
 	import AnswersForm from '$lib/components/AnswersForm.svelte';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import Standings from '$lib/components/Standings.svelte';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { StateEvent } from '$server-interface/events.model';
-	import type { Answer, QuizInfo, SocketMessage, StartRound } from '$server-interface/messages';
+	import type { QuizStateMessage, SocketMessage } from '$server-interface/messages';
 	import { writable } from 'svelte-local-storage-store';
+	import NameForm from './NameForm.svelte';
 
 	const name = writable($page.params.code, '');
 	const socket = connectSocket(new Map([['joinCode', $page.params.code]]));
-	let state: 'joining' | 'preparation' | 'answering' | 'revealing' | 'scoring' = 'joining';
 
-	function join() {
-		$socket = { type: 'join-quiz', name: $name };
-		state = 'preparation';
+	function join(newName?: string) {
+		if (newName) {
+			$name = newName;
+			$socket = { type: 'join-quiz', name: newName };
+		}
 	}
-	if ($name !== '') {
-		join();
-	}
-
-	let round: Omit<StartRound, 'type'> = {
-		name: '',
-		questions: []
-	};
-	let quiz: QuizInfo = {} as QuizInfo;
+	join($name);
 
 	$: updateQuiz($socket);
 
-	function updateQuiz(msg: SocketMessage | StateEvent) {
-		if (msg === undefined) return;
-		switch (msg.type) {
-			case 'players':
-				quiz.players = msg.players;
-				break;
-			case 'quiz-info':
-				state = 'preparation';
-				quiz = msg;
-				break;
-			case 'start-round':
-				state = 'answering';
-				round = msg;
-				roundAnswers = [];
-				break;
-			case 'answers':
-				roundAnswers = msg.answers;
-			case 'end-round':
-			case 'SKIPANSWERS':
-				state = 'revealing';
-				break;
-			case 'score-answer':
-			case 'SCORE':
-				state = 'scoring';
-				break;
+	let quizState: QuizStateMessage & { lastEvent: string; done: boolean };
+	function updateQuiz(
+		msg: SocketMessage | StateEvent | (QuizStateMessage & { lastEvent: string; done: boolean })
+	) {
+		if (msg?.type === 'quiz-state' && 'done' in msg) {
+			quizState = { ...msg };
 		}
 	}
 
-	let roundAnswers: Answer[] = [];
-
 	function sendAnswers(answers: string[]) {
 		$socket = { type: 'ANSWER', player: $name, answers };
-		state = 'revealing';
 	}
+	$: submitted = quizState?.answers.some(
+		(a) => a.roundId === quizState.currentRound && a.player === $name
+	);
+	$: currentQ = quizState?.questions
+		.filter((q) => q.roundId === quizState.currentRound)
+		.map((q) => q.text);
 </script>
 
-{#if state === 'joining'}
-	<form on:submit|preventDefault={join}>
-		<label>
-			Name
-			<input type="text" name="name" bind:value={$name} />
-		</label>
-		<button disabled={$name.length < 2 || $name.length > 12} type="submit">Join</button>
-	</form>
-{:else}
-	<h1>{quiz?.name}</h1>
-{/if}
-
-{#if state === 'preparation'}
-	<p>Waiting for players to join and the host to start the quiz</p>
-	<PlayerList players={quiz.players} />
-{/if}
-
-{#if state === 'answering'}
-	<h2>Round: {round.name}</h2>
-	<AnswersForm questions={round.questions} on:submit={(answers) => sendAnswers(answers.detail)} />
-{/if}
-
-{#if state === 'revealing'}
-	<p>Wait for all players to submit their answers and the host to reveal them</p>
-{/if}
-
-{#if state === 'scoring'}
-	<p>Wait for host to score all answers</p>
-{/if}
-
-{#if state === 'revealing' || state == 'scoring'}
-	<AnswersList questions={round.questions} answers={roundAnswers} showScores={false} />
-{/if}
+<h1>{quizState?.name}</h1>
+<PlayerList players={quizState?.players} />
+<div>
+	{#if quizState === undefined}
+		<p>
+			Waiting for Quiz Informations, Quiz with the code <b>{$page.params.code}</b> might not exist.
+		</p>
+	{:else if quizState.done}
+		<h2>Final Scores</h2>
+		<Standings rounds={quizState.rounds} answers={quizState.answers} />
+	{:else if !quizState.players.some((p) => p.name === $name)}
+		<NameForm on:submit={(e) => join(e.detail)} />
+	{:else if quizState.lastEvent === 'PLAYERS'}
+		<p>
+			The quiz has <b>{quizState.rounds.length}</b> rounds and a total of
+			<b>{quizState.questions.length}</b> questions.
+		</p>
+		<p>Waiting for players to join and the host to start the quiz.</p>
+	{:else}
+		<h2>Round {quizState.currentRound + 1}: {quizState.rounds.at(quizState.currentRound)?.text}</h2>
+		{#if submitted}
+			<AnswersList
+				questions={currentQ}
+				answers={quizState.answers.filter(
+					(a) => a.roundId === quizState.currentRound && a.revealed
+				)}
+				showScores={true}
+			/>
+			<p>Waiting for other players to submit their answers and the host to score them.</p>
+		{:else}
+			<AnswersForm questions={currentQ} on:submit={(answers) => sendAnswers(answers.detail)} />
+		{/if}
+	{/if}
+</div>

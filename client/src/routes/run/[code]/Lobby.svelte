@@ -23,9 +23,3 @@
 </p>
 
 <button disabled={state.players.length === 0} on:click={() => dispatch('start')}>start quiz</button>
-
-<style>
-	p {
-		margin-bottom: 0.5rem;
-	}
-</style>

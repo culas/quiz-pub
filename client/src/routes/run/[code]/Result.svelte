@@ -5,5 +5,5 @@
 	export let state: QuizState;
 </script>
 
-<h2>Scores</h2>
+<h2>Final Scores</h2>
 <Standings answers={state.answers} rounds={state.rounds} />

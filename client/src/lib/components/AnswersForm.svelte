@@ -16,8 +16,14 @@
 
 <form on:submit|preventDefault={submit}>
 	{#each questions as q, i}
-		<p>{q}</p>
+		<h3>{i + 1}) {q}</h3>
 		<input type="text" bind:value={answers[i]} />
 	{/each}
 	<button {disabled} type="submit">send answers</button>
 </form>
+
+<style>
+	input {
+		margin-bottom: 0.5rem;
+	}
+</style>

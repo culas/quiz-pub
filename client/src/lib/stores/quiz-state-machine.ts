@@ -1,9 +1,8 @@
 import type { StateEvent } from '$server-interface/events.model';
-import type { QuizState, SocketMessage } from '$server-interface/messages';
-import type { Writable } from 'svelte/store';
+import type { QuizState } from '$server-interface/messages';
 import { assign, createMachine } from 'xstate';
 
-export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 'update'>) => createMachine({
+export const quizMachine = () => createMachine({
 	predictableActionArguments: true,
 	tsTypes: {} as import("./quiz-state-machine.typegen").Typegen0,
 	id: 'quiz',
@@ -26,21 +25,21 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 			on: {
 				PLAYERS: { target: 'lobby', actions: ['setPlayers'] },
 				START: [
-					{ target: 'round.starting', cond: 'quizReady', actions: ['send'] },
+					{ target: 'round.starting', cond: 'quizReady' },
 				]
 			},
 		},
 		round: {
 			states: {
 				starting: {
-					always: { target: 'answering', actions: ['sendRound', 'resetPlayerColors'] },
+					always: { target: 'answering', actions: ['resetPlayerColors'] },
 				},
 				answering: {
 					on: {
 						ANSWER: [
 							{ target: 'answered', actions: ['setAnswers'] },
 						],
-						SKIPANSWERS: { target: 'revealing', actions: 'send' }
+						SKIPANSWERS: { target: 'revealing' }
 					},
 				},
 				answered: {
@@ -52,14 +51,14 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 				revealing: {
 					on: {
 						REVEAL: [
-							{ target: 'scoring', actions: ['reveal', 'sendAnswers'] },
+							{ target: 'scoring', actions: ['reveal'] },
 						]
 					}
 				},
 				scoring: {
 					on: {
 						SCORE: [
-							{ target: 'scoring', actions: ['scoreAnswer', 'send'] }
+							{ target: 'scoring', actions: ['scoreAnswer'] }
 						],
 						CONFIRMSCORE: [
 							{ target: 'scored' },
@@ -93,10 +92,7 @@ export const quizMachine = (socket?: Omit<Writable<StateEvent | SocketMessage>, 
 		roundsFinished: (ctx) => ctx.currentRound >= ctx.rounds.length,
 	},
 	actions: {
-		send: (_, event) => socket?.set(event),
-		sendAnswers: ctx => socket?.set({ type: 'answers', roundName: ctx.rounds[ctx.currentRound].text, answers: ctx.answers.filter(a => a.roundId === ctx.currentRound) }),
 		setPlayers: assign({ players: (_, event) => event.players }),
-		sendRound: (ctx) => socket?.set({ type: 'start-round', name: ctx.rounds[ctx.currentRound].text, questions: ctx.questions.filter(q => q.roundId === ctx.currentRound).map(q => q.text) }),
 		nextRound: assign({ currentRound: ctx => ctx.currentRound + 1 }),
 		setAnswers: assign({
 			answers: (ctx, event) => [...ctx.answers, ...event.answers.map((val, i) => ({ roundId: ctx.currentRound, questionId: i, player: event.player, text: val, revealed: false }))],

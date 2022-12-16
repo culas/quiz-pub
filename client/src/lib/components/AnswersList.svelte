@@ -17,7 +17,7 @@
 </script>
 
 {#each questions as q, i}
-	<h3>Q{i + 1}: {q}</h3>
+	<h3>{i + 1}) {q}</h3>
 	{#each answers.filter((a) => a.questionId === i) as a}
 		<div>
 			<b>{a.player}:</b>
@@ -26,7 +26,7 @@
 				<SelectScore score={a.score} on:change={(e) => score(e.detail, i, a.player)} />
 			{/if}
 			{#if showScores}
-				<span>{a.score}</span>
+				<span>{a.score ?? '–'}</span>
 			{/if}
 		</div>
 	{/each}
@@ -47,5 +47,6 @@
 
 	div p {
 		flex-grow: 1;
+		margin: 0;
 	}
 </style>

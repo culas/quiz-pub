@@ -4,7 +4,7 @@ export type SocketMessage =
   | ServerMessage
   | QuizStateMessage;
 
-export type QuizStateMessage = { type: "quiz-state" } & QuizState;
+export type QuizStateMessage = { type: "quiz-state" } & Omit<QuizState, 'adminCode'>;
 
 export interface Answer {
   roundId: number;
