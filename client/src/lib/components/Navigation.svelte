@@ -28,14 +28,4 @@
 		display: flex;
 		gap: 1rem;
 	}
-
-	a {
-		color: var(--color-primary);
-		text-decoration: none;
-	}
-
-	a.active,
-	a:hover {
-		color: var(--color-dark);
-	}
 </style>

@@ -139,3 +139,13 @@ section.disabled {
 p {
 	margin: 0 0 0.5em 0;
 }
+
+a:not(.button) {
+	color: var(--color-primary);
+	text-decoration: none;
+}
+
+a.active:not(.button),
+a:hover:not(.button) {
+	color: var(--color-dark);
+}
