@@ -11,13 +11,17 @@
 		answers = [];
 	}
 
-	$: disabled = answers.length !== questions.length || answers.some((a) => a.length === 0);
+	const maxlength = 150;
+	const minlength = 1;
+	$: disabled =
+		answers.length !== questions.length ||
+		answers.some((a) => a.length < minlength || a.length > maxlength);
 </script>
 
 <form on:submit|preventDefault={submit}>
 	{#each questions as q, i}
 		<h3>{i + 1}) {q}</h3>
-		<input type="text" bind:value={answers[i]} />
+		<input type="text" {minlength} {maxlength} bind:value={answers[i]} />
 	{/each}
 	<button {disabled} type="submit">send answers</button>
 </form>

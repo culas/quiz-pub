@@ -2,14 +2,16 @@
 	import { createEventDispatcher } from 'svelte';
 
 	let name = '';
+	const minlength = 2;
+	const maxlength = 12;
 	const dispatch = createEventDispatcher<{ submit: string }>();
 </script>
 
 <form on:submit|preventDefault={() => dispatch('submit', name)}>
 	<label>
-		<input type="text" name="name" placeholder="NAME" bind:value={name} />
+		<input type="text" name="name" {minlength} {maxlength} placeholder="NAME" bind:value={name} />
 	</label>
-	<button disabled={name.length < 2 || name.length > 12} type="submit">Join</button>
+	<button disabled={name.length < minlength || name.length > maxlength} type="submit">Join</button>
 </form>
 
 <style>
