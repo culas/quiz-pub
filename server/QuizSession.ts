@@ -27,8 +27,10 @@ export class QuizSession {
     this.hostChannel = new BroadcastChannel(adminCode);
     this.hostChannel.onmessage = (event) => this.host?.send(event.data);
     this.playersChannel = new BroadcastChannel(joinCode);
-    this.playersChannel.onmessage = (event) =>
+    this.playersChannel.onmessage = (event) => {
       this.players.forEach((p) => p.send(event.data));
+      this.lastHostMessage = event.data;
+    }
     this.connectionsChannel = new BroadcastChannel(adminCode + joinCode);
     this.connectionsChannel.onmessage = ({ data }) => {
       if (data === this.CLOSE_SIGNAL) {
