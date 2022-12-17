@@ -1,69 +1,99 @@
-import { AnswerEvent, JoinQuiz } from "./events.model.ts";
-
-interface Player {
-  session: WebSocket;
-  name?: string;
-}
-
 export class QuizSession {
-  public players: Player[] = [];
   public host?: WebSocket;
+  public players: Set<WebSocket> = new Set();
+
   public onClose?: () => void;
+
+  private isPrimaryServerForSession = false;
+  private totalOpenConnections = 0;
+
   private lastHostMessage?: string;
+
+  private hostChannel: BroadcastChannel;
+  private playersChannel: BroadcastChannel;
+  private connectionsChannel: BroadcastChannel;
+
+  private readonly CLOSE_SIGNAL = "CLOSE";
 
   constructor(
     public adminCode: string,
     public joinCode: string,
-    host: WebSocket,
+    host?: WebSocket,
   ) {
-    this.addHost(host);
+    if (host) {
+      this.isPrimaryServerForSession = true;
+      this.addHost(host);
+    }
+    this.hostChannel = new BroadcastChannel(adminCode);
+    this.hostChannel.onmessage = (event) => this.host?.send(event.data);
+    this.playersChannel = new BroadcastChannel(joinCode);
+    this.playersChannel.onmessage = (event) =>
+      this.players.forEach((p) => p.send(event.data));
+    this.connectionsChannel = new BroadcastChannel(adminCode + joinCode);
+    this.connectionsChannel.onmessage = ({ data }) => {
+      if (data === this.CLOSE_SIGNAL) {
+        this.closeSession();
+      } else if (this.isPrimaryServerForSession) {
+        this.changeOpenConnections(data);
+      }
+    };
   }
 
   public addHost(socket: WebSocket) {
     this.host = socket;
-    socket.onmessage = (msg) => {
-      this.players.forEach((player) => player.session.send(msg.data));
-      this.lastHostMessage = msg.data;
+    this.changeOpenConnections(1);
+    socket.onmessage = ({ data }) => {
+      this.players.forEach((player) => player.send(data));
+      this.playersChannel.postMessage(data);
+      this.lastHostMessage = data;
     };
     socket.onclose = () => {
       this.host = undefined;
-      if (this.hasSessionEnded()) {
-        this.onClose?.();
-      }
+      this.changeOpenConnections(-1);
     };
   }
 
   public addPlayer(socket: WebSocket) {
-    const player = { session: socket, color: 'var(--color-primary)' } as Player;
-    this.players.push(player);
-    socket.onopen = () => this.lastHostMessage && socket.send(this.lastHostMessage);
+    this.players.add(socket);
+    this.changeOpenConnections(1);
+    let name: string | undefined = undefined;
+    socket.onopen = () =>
+      this.lastHostMessage && socket.send(this.lastHostMessage);
     socket.onmessage = (msg) => {
-      const data: JoinQuiz | AnswerEvent = JSON.parse(msg.data);
+      const data = JSON.parse(msg.data);
       if (data.type === "JOIN") {
-        player.name = data.name;
-        this.sendPlayersToHost();
-      } else if (data.type === "ANSWER") {
-        this.host?.send(msg.data);
+        name = data.name;
       }
+      this.sendToHost(msg.data);
     };
     socket.onclose = () => {
-      this.players = this.players.filter((p) => p.name !== player.name);
-      if (this.hasSessionEnded()) {
-        this.onClose?.();
-      } else {
-        this.sendPlayersToHost();
-      }
+      this.players.delete(socket);
+      this.sendToHost(JSON.stringify({ type: "LEAVE", name }));
+      this.changeOpenConnections(-1);
     };
   }
 
-  private sendPlayersToHost() {
-    this.host?.send(JSON.stringify({
-      type: "PLAYERS",
-      players: this.players.map(({ name }) => ({ name: name ?? "noname" })),
-    }));
+  private sendToHost(data: string) {
+    this.host?.send(data);
+    this.hostChannel.postMessage(data);
   }
 
-  private hasSessionEnded(): boolean {
-    return this.host === undefined && this.players.length === 0;
+  private closeSession() {
+    this.hostChannel.close();
+    this.playersChannel.close();
+    this.connectionsChannel.close();
+    this.onClose?.();
+  }
+
+  private changeOpenConnections(change: 1 | -1) {
+    if (this.isPrimaryServerForSession) {
+      this.totalOpenConnections = this.totalOpenConnections + change;
+      if (this.totalOpenConnections === 0) {
+        this.connectionsChannel.postMessage(this.CLOSE_SIGNAL);
+        this.closeSession();
+      }
+    } else {
+      this.connectionsChannel.postMessage(change);
+    }
   }
 }

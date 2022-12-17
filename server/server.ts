@@ -5,6 +5,11 @@ import { QuizSession } from "./QuizSession.ts";
 
 const sessions: Map<string, QuizSession> = new Map();
 
+const announcementChannel = new BroadcastChannel("announcement");
+announcementChannel.onmessage = ({ data }) => {
+  sessions.set(data.joinCode, new QuizSession(data.adminCode, data.joinCode));
+};
+
 function reqHandler(req: Request) {
   const appDistDir = parse(Deno.args).dist || "client";
   const url = new URL(req.url);
@@ -19,13 +24,14 @@ function reqHandler(req: Request) {
         if (sessions.has(joinCode)) {
           const session = sessions.get(joinCode);
           if (session?.adminCode === adminCode) {
-            console.log("looks like a reconnect from the host");
+            console.log("reconnect host");
             session.addHost(socket);
           }
         } else {
           console.log("creating session");
           const quizSession = new QuizSession(adminCode, joinCode, socket);
           sessions.set(joinCode, quizSession);
+          announcementChannel.postMessage({ adminCode, joinCode });
           quizSession.onClose = () => {
             console.log("closing: ", joinCode);
             sessions.delete(joinCode);
