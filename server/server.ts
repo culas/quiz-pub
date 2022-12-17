@@ -18,7 +18,7 @@ announcementChannel.onmessage = ({ data }) => {
 };
 
 async function reqHandler(req: Request) {
-  const appDistDir = parse(Deno.args).dist || "client/build";
+  const appDistDir = parse(Deno.args).dist || "client";
   const url = new URL(req.url);
   if (req.headers.get("upgrade") === "websocket") {
     const { socket, response } = Deno.upgradeWebSocket(req);
