@@ -35,7 +35,7 @@
 	function createQuizStateMessage(
 		{ adminCode, ...state }: QuizState,
 		lobby: boolean,
-		done: boolean = false
+		done = false
 	): QuizStateMessage {
 		return {
 			...state,

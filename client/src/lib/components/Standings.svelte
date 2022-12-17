@@ -3,7 +3,7 @@
 
 	export let answers: Answer[] = [];
 	export let rounds: Round[] = [];
-	export let player: string = '';
+	export let player = '';
 
 	$: players = answers.map((a) => a.player).reduce((acc, p) => acc.add(p), new Set());
 	$: scores = [...players]

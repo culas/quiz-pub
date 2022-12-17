@@ -22,13 +22,13 @@
 		quiz.rounds = quiz.rounds.map((r, i) => (i === rIdx ? round : r));
 	}
 
-	function removeQuestion(rIdx: number, qIdx: number): any {
+	function removeQuestion(rIdx: number, qIdx: number) {
 		quiz.rounds = quiz.rounds.map((r, i) =>
 			i === rIdx ? { ...r, questions: r.questions.filter((_, i) => i !== qIdx) } : r
 		);
 	}
 
-	function removeRound(rIdx: number): any {
+	function removeRound(rIdx: number) {
 		quiz.rounds = quiz.rounds.filter((_, i) => i !== rIdx);
 	}
 

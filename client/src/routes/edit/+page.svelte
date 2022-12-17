@@ -13,7 +13,7 @@
 	$: showDeleted = false;
 	$title = 'Create';
 
-	function runQuiz(save: QuizSave): any {
+	function runQuiz(save: QuizSave) {
 		const code = getRunAdminCode(save.id);
 		if (code) {
 			$runCodes = [...$runCodes, code];

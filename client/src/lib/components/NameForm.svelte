@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	let name: string = '';
+	let name = '';
 	const dispatch = createEventDispatcher<{ submit: string }>();
 </script>
 
