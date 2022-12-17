@@ -32,13 +32,14 @@
 
 	function createQuizStateMessage(
 		{ adminCode, ...state }: QuizState,
+		lobby: boolean,
 		done: boolean = false
 	): QuizStateMessage {
 		return {
 			...state,
 			done,
 			rounds: state.rounds.filter((r) => r.id <= state.currentRound),
-			questions: state.questions.filter((q) => q.roundId <= state.currentRound),
+			questions: state.questions.filter((q) => !lobby && q.roundId <= state.currentRound),
 			answers: state.answers.map((a) => (a.revealed ? a : { ...a, text: '' })),
 			type: 'QUIZSTATE'
 		};
@@ -59,7 +60,7 @@
 
 	$: sendQuizStateToPlayers($state);
 	function sendQuizStateToPlayers(state: State<QuizState, StateEvent>) {
-		$socket = createQuizStateMessage(state.context, state.done);
+		$socket = createQuizStateMessage(state.context, state.matches('lobby'), state.done);
 	}
 
 	$: waitingForPlayers = $qService.context.players.filter(
