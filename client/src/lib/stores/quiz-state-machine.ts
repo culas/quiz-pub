@@ -89,7 +89,7 @@ export const quizMachine = () =>
 							: [...ctx.players, { name: name }]
 				}),
 				removePlayer: assign({
-					players: (ctx, { name }) => ctx.players.filter((p) => p.name === name)
+					players: (ctx, { name }) => ctx.players.filter((p) => p.name !== name)
 				}),
 				nextRound: assign({ currentRound: (ctx) => ctx.currentRound + 1 }),
 				setAnswers: assign({
