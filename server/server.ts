@@ -7,7 +7,14 @@ const sessions: Map<string, QuizSession> = new Map();
 
 const announcementChannel = new BroadcastChannel("announcement");
 announcementChannel.onmessage = ({ data }) => {
-  sessions.set(data.joinCode, new QuizSession(data.adminCode, data.joinCode));
+  const session = sessions.get(data.joinCode);
+  if (session === undefined && data.adminCode && data.joinCode) {
+    console.log('create session from announcement');
+    sessions.set(data.joinCode, new QuizSession(data.adminCode, data.joinCode));
+  } else if (session !== undefined && data.adminCode == undefined) {
+    // case: a player joined a server that hasn't received the announcement yet
+    announcementChannel.postMessage({ adminCode: session.adminCode, joinCode: session.joinCode });
+  }
 };
 
 function reqHandler(req: Request) {
@@ -44,6 +51,8 @@ function reqHandler(req: Request) {
           quizSession.addPlayer(socket);
         } else {
           console.log("session does not exist");
+          // requesting a re-announcement of the session if it exists
+          announcementChannel.postMessage({ joinCode });
           socket.onopen = () => {
             socket.send(
               JSON.stringify({
