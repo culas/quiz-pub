@@ -11,10 +11,8 @@
 
 <p>
 	Invite players with the following code (click it to copy invite link):
-	<b
-		use:tooltip
-		data-tooltip="click to copy"
-		use:copy={location.origin + '/play/' + state.joinCode}>{state.joinCode}</b
+	<b use:tooltip data-tooltip="click to copy" use:copy={location.origin + '/play/' + state.joinCode}
+		>{state.joinCode}</b
 	>
 </p>
 

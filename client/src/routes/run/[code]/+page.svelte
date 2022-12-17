@@ -6,7 +6,12 @@
 	import type { QuizState, QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { connectSocket } from '$lib/utils/websocket';
-	import type { AnswerEvent, PlayersEvent, StateEvent } from '$server-interface/events.model';
+	import type {
+		AnswerEvent,
+		JoinEvent,
+		LeaveEvent,
+		StateEvent
+	} from '$server-interface/events.model';
 	import { useMachine } from '@xstate/svelte';
 	import { writable } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
@@ -15,7 +20,7 @@
 
 	const state = writable($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
 
-	const socket = connectSocket<QuizStateMessage | PlayersEvent | AnswerEvent>(
+	const socket = connectSocket<QuizStateMessage | JoinEvent | LeaveEvent | AnswerEvent>(
 		new Map([
 			['joinCode', $state.context.joinCode],
 			['adminCode', $state.context.adminCode]
@@ -27,7 +32,6 @@
 
 	function createQuizStateMessage(
 		{ adminCode, ...state }: QuizState,
-		{ type }: StateEvent,
 		done: boolean = false
 	): QuizStateMessage {
 		return {
@@ -36,8 +40,7 @@
 			rounds: state.rounds.filter((r) => r.id <= state.currentRound),
 			questions: state.questions.filter((q) => q.roundId <= state.currentRound),
 			answers: state.answers.map((a) => (a.revealed ? a : { ...a, text: '' })),
-			type: 'QUIZSTATE',
-			lastEvent: type
+			type: 'QUIZSTATE'
 		};
 	}
 
@@ -45,8 +48,10 @@
 
 	$: updateStateFromPlayerMessage($socket);
 
-	function updateStateFromPlayerMessage(socket: QuizStateMessage | PlayersEvent | AnswerEvent) {
-		if (socket && (socket.type === 'PLAYERS' || socket.type === 'ANSWER')) {
+	function updateStateFromPlayerMessage(
+		socket: QuizStateMessage | JoinEvent | LeaveEvent | AnswerEvent
+	) {
+		if (socket && (socket.type === 'JOIN' || socket.type === 'LEAVE' || socket.type === 'ANSWER')) {
 			send(socket);
 			$state = $qService; // explicit save, as change detection is off with this flow
 		}
@@ -54,7 +59,7 @@
 
 	$: sendQuizStateToPlayers($state);
 	function sendQuizStateToPlayers(state: State<QuizState, StateEvent>) {
-		$socket = createQuizStateMessage(state.context, state.event, state.done);
+		$socket = createQuizStateMessage(state.context, state.done);
 	}
 
 	$: waitingForPlayers = $qService.context.players.filter(

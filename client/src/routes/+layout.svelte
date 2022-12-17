@@ -13,7 +13,11 @@
 	<slot />
 </main>
 
-<footer>QuizPub: create, run and play pub quiz style events • by celep for Fishcord • <a href="https://github.com/culas/quiz-pub">GitHub</a></footer>
+<footer>
+	QuizPub: create, run and play pub quiz style events • by celep for Fishcord • <a
+		href="https://github.com/culas/quiz-pub">GitHub</a
+	>
+</footer>
 
 <style>
 	main {

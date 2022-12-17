@@ -25,7 +25,8 @@ export const quizMachine = () =>
 			states: {
 				lobby: {
 					on: {
-						PLAYERS: { target: 'lobby', actions: ['setPlayers'] },
+						JOIN: { target: 'lobby', actions: 'addPlayer' },
+						LEAVE: { target: 'lobby', actions: 'removePlayer' },
 						START: [{ target: 'round.starting', cond: 'quizReady' }]
 					}
 				},
@@ -81,7 +82,15 @@ export const quizMachine = () =>
 				roundsFinished: (ctx) => ctx.currentRound >= ctx.rounds.length
 			},
 			actions: {
-				setPlayers: assign({ players: (_, event) => event.players }),
+				addPlayer: assign({
+					players: (ctx, { name }) =>
+						ctx.players.some((p) => p.name === name)
+							? ctx.players
+							: [...ctx.players, { name: name }]
+				}),
+				removePlayer: assign({
+					players: (ctx, { name }) => ctx.players.filter((p) => p.name === name)
+				}),
 				nextRound: assign({ currentRound: (ctx) => ctx.currentRound + 1 }),
 				setAnswers: assign({
 					answers: (ctx, event) => [

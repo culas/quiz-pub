@@ -1,7 +1,4 @@
-export type QuizStateMessage = { type: 'QUIZSTATE'; lastEvent: string; done: boolean } & Omit<
-	QuizState,
-	'adminCode'
->;
+export type QuizStateMessage = { type: 'QUIZSTATE'; done: boolean } & Omit<QuizState, 'adminCode'>;
 
 export interface QuizState {
 	name: string;

@@ -7,11 +7,11 @@
 	import Standings from '$lib/components/Standings.svelte';
 	import type { QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { connectSocket } from '$lib/utils/websocket';
-	import type { AnswerEvent, JoinQuiz } from '$server-interface/events.model';
+	import type { AnswerEvent, JoinEvent } from '$server-interface/events.model';
 	import { writable } from 'svelte-local-storage-store';
 
 	const name = writable($page.params.code, '');
-	const socket = connectSocket<QuizStateMessage | JoinQuiz | AnswerEvent>(
+	const socket = connectSocket<QuizStateMessage | JoinEvent | AnswerEvent>(
 		new Map([['joinCode', $page.params.code]])
 	);
 
@@ -26,7 +26,7 @@
 	$: updateQuiz($socket);
 
 	let quizState: QuizStateMessage;
-	function updateQuiz(msg: QuizStateMessage | JoinQuiz | AnswerEvent) {
+	function updateQuiz(msg: QuizStateMessage | JoinEvent | AnswerEvent) {
 		if (msg?.type === 'QUIZSTATE' && 'done' in msg) {
 			quizState = { ...msg };
 		}
@@ -55,7 +55,7 @@
 		<Standings rounds={quizState.rounds} answers={quizState.answers} player={$name} />
 	{:else if !quizState.players.some((p) => p.name === $name)}
 		<NameForm on:submit={(e) => join(e.detail)} />
-	{:else if quizState.lastEvent === 'PLAYERS'}
+	{:else if quizState.questions.length === 0}
 		<p>
 			The quiz has <b>{quizState.rounds.length}</b> rounds and a total of
 			<b>{quizState.questions.length}</b> questions.
