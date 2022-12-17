@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { saves } from '$lib/stores/saves.store';
+	import { title } from '$lib/stores/title.store';
 	import type { QuizSave } from 'src/lib/models/quiz-save.model';
 	$: quiz = $saves.find((save: QuizSave) => save.id === $page.params.code) ?? {
 		id: $page.params.code,
@@ -9,6 +10,7 @@
 		date: Date.now(),
 		deleted: false
 	};
+	$: $title = `Edit «${quiz?.name}»`;
 
 	function addRound() {
 		quiz.rounds = [...quiz.rounds, { name: '', questions: [''] }];

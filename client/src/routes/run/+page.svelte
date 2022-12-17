@@ -1,6 +1,8 @@
 <script>
 	import { runs } from '$lib/stores/runs.store';
+	import { title } from '$lib/stores/title.store';
 
+	$title = 'Run';
 	$: showFinished = false;
 	$: quizzes = $runs
 		.filter((r) => !r.done || showFinished)

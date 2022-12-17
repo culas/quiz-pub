@@ -6,6 +6,7 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import Standings from '$lib/components/Standings.svelte';
 	import type { QuizStateMessage } from '$lib/models/quiz-state.model';
+	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinEvent } from '$server-interface/events.model';
 	import { writable } from 'svelte-local-storage-store';
@@ -14,6 +15,7 @@
 	const socket = connectSocket<QuizStateMessage | JoinEvent | AnswerEvent>(
 		new Map([['joinCode', $page.params.code]])
 	);
+	$title = 'Join Quiz';
 
 	function join(newName?: string) {
 		if (newName) {
@@ -29,6 +31,7 @@
 	function updateQuiz(msg: QuizStateMessage | JoinEvent | AnswerEvent) {
 		if (msg?.type === 'QUIZSTATE' && 'done' in msg) {
 			quizState = { ...msg };
+			$title = `Play «${quizState.name}»`;
 		}
 	}
 

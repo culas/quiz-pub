@@ -1,6 +1,8 @@
 <script>
 	import DarkmodeToggle from '$lib/components/DarkmodeToggle.svelte';
 	import Navigation from '$lib/components/Navigation.svelte';
+	import { fullTitle } from '$lib/stores/title.store';
+	$: document.title = $fullTitle;
 </script>
 
 <header>

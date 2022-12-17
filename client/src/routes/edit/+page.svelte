@@ -4,12 +4,14 @@
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { runCodes } from '$lib/stores/runs.store';
 	import { saves } from '$lib/stores/saves.store';
+	import { title } from '$lib/stores/title.store';
 	import { createQuizContext } from '$lib/utils/create-quiz-state';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
 	import { writable } from 'svelte-local-storage-store';
 
 	$: showDeleted = false;
+	$title = 'Create';
 
 	function runQuiz(save: QuizSave): any {
 		const code = getRunAdminCode(save.id);

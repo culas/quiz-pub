@@ -1,5 +1,7 @@
 <script>
 	import JoinForm from '$lib/components/JoinForm.svelte';
+	import { title } from '$lib/stores/title.store';
+	$title = 'Play';
 </script>
 
 <h1>Play Quiz</h1>

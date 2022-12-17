@@ -5,6 +5,7 @@
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import type { QuizState, QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
+	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type {
 		AnswerEvent,
@@ -29,6 +30,7 @@
 
 	const { state: qService, send } = useMachine(quizMachine(), { state: $state });
 	$: $state = $qService;
+	$title = `Run «${$qService.context.name}»`;
 
 	function createQuizStateMessage(
 		{ adminCode, ...state }: QuizState,
