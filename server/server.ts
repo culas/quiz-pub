@@ -17,8 +17,8 @@ announcementChannel.onmessage = ({ data }) => {
   }
 };
 
-function reqHandler(req: Request) {
-  const appDistDir = parse(Deno.args).dist || "client";
+async function reqHandler(req: Request) {
+  const appDistDir = parse(Deno.args).dist || "client/build";
   const url = new URL(req.url);
   if (req.headers.get("upgrade") === "websocket") {
     const { socket, response } = Deno.upgradeWebSocket(req);
@@ -71,7 +71,9 @@ function reqHandler(req: Request) {
     return response;
   }
   if (url.pathname.match(/\.(js|css|png|webmanifest)$/)) {
-    return serveFile(req, `${Deno.cwd()}/${appDistDir}/${url.pathname}`);
+    const fileResp = await serveFile(req, `${Deno.cwd()}/${appDistDir}/${url.pathname}`, { etagAlgorithm: "sha-256" });
+    fileResp.headers.append('Cache-Control', 'public,max-age=604800,immutable');
+    return fileResp;
   }
   return serveFile(req, `${Deno.cwd()}/${appDistDir}/index.html`);
 }
