@@ -49,10 +49,12 @@
 	$: quizzes = $saves.filter((s) => !s.deleted || showDeleted).sort((s) => -s.date);
 </script>
 
-<header class="flex flex-wrap items-center mb-4">
-	<h1 class="mb-0 flex-1">Quiz Saves</h1>
+<header class="flex flex-wrap items-start">
+	<h1 class="flex-1">Quiz Saves</h1>
 	<button on:click={createNewQuiz}>create new quiz</button>
 </header>
+
+<p>Create and edit your own quizzes.</p>
 
 {#each quizzes as save}
 	<section class="card shadow-lg my-4" class:opacity-60={save.deleted}>
@@ -62,7 +64,7 @@
 			<li>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</li>
 			<li>Last save: {new Date(save.date).toLocaleString()}</li>
 		</ul>
-		<div class="card-footer flex flex-wrap gap-2">
+		<footer class="card-footer flex flex-wrap gap-2">
 			{#if save.deleted}
 				<button on:click={() => restoreQuiz(save.id)}>restore</button>
 			{:else}
@@ -71,7 +73,7 @@
 				<span class="flex-1"></span>
 				<button class="variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</button>
 			{/if}
-		</div>
+		</footer>
 	</section>
 {/each}
 
