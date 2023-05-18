@@ -5,3 +5,7 @@ html, body {
 button, button[type=button], button[type=submit] {
 	@apply btn variant-filled-primary uppercase font-bold;
 }
+
+h1 {
+	@apply h1 mb-4;
+}
