@@ -27,6 +27,8 @@
 			<a class="button" href="run/{quiz.context.adminCode}">Open</a>
 		</footer>
 	</section>
+{:else}
+	<p class="my-4 italic opacity-50">No quizzes yet…</p>
 {/each}
 
 <SlideToggle name="slider-label" active="bg-error-500" bind:checked={showFinished}>Show finished quizzes</SlideToggle>
