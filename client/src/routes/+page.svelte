@@ -5,18 +5,12 @@
 	$title = '';
 </script>
 
-<h1>QuizPub</h1>
+<h1 class="h1 mb-4">QuizPub</h1>
 
 <p>Create, run and play pub quizzes with your friends.</p>
 
 <JoinForm />
 
-<p>Run your own quizzes:</p>
-<ul>
-	<li>
-		<a class="anchor" href="/edit">create and edit quizzes</a>
-	</li>
-	<li>
-		<a class="anchor" href="/run">run quizzes</a>
-	</li>
-</ul>
+<p>
+	You can <a class="anchor" href="/edit">create</a> and then <a href="/run" class="anchor">run</a> your own quiz.
+</p>

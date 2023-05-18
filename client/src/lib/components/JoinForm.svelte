@@ -5,13 +5,13 @@
 	const codeLength = 6;
 </script>
 
-<h2 class="h2">Join Quiz</h2>
-
-<form on:submit|preventDefault={() => goto('play/' + joinCode)}>
-	<label class="flex flex-wrap items-end gap-2 label">
-		<span class="w-full">Enter join code</span>
+<form on:submit|preventDefault={() => goto('play/' + joinCode.toUpperCase())}
+      class="card shadow-lg my-4">
+	<h2 class="h2 card-header">Join Quiz</h2>
+	<label class="flex flex-wrap items-end gap-x-2 label p-4">
+		<span class="w-full">Enter the {codeLength}-character join code</span>
 		<input
-			class="input flex-1"
+			class="input flex-1 uppercase"
 			type="text"
 			minlength={codeLength}
 			maxlength={codeLength}
