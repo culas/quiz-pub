@@ -1,0 +1,37 @@
+@startuml Quiz
+!pragma teoz true
+
+participant Host
+participant Server
+collections Players
+
+== Initialisation ==
+
+Host -> Server : CreateQuiz
+activate Server
+loop until valid name
+	Players -> Server : JoinQuiz
+	alt valid name
+		Server -> Players : Player
+		& Server -> Host : Player
+	else name already taken
+		Server -> Players : Error (invalid name)
+	end
+end
+
+== Running ==
+
+loop for each round
+	Host -> Players : Round
+	Players -> Host : Answers
+	Host -> Players : RoundAnswers
+	Host -> Players : AnswerScore
+end
+
+== Finalisation ==
+
+Host -> Server : FinalScore
+deactivate Server
+& Server -> Players : FinalScore
+
+@enduml

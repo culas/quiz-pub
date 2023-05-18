@@ -1,0 +1,16 @@
+@startuml Host State
+
+start
+
+:preparation;
+-> players joining;
+repeat :round;
+	-> getting all answers;
+	:revealing answers;
+	:scoring;
+repeat while (more rounds?)
+:final score;
+
+stop
+
+@enduml
