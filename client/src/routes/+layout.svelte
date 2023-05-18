@@ -10,7 +10,8 @@
 	setInitialClassState();
 </script>
 
-<AppShell slotPageFooter="p-2 text-xs bg-surface-100-800-token shadow-xl">
+<AppShell slotPageContent="p-8 w-full mx-auto max-w-screen-md"
+          slotPageFooter="p-2 text-xs bg-surface-100-800-token shadow-xl">
 	<svelte:fragment slot="header">
 		<AppBar class="shadow-xl">
 			<svelte:fragment slot="lead">
@@ -23,9 +24,7 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<main>
-		<slot />
-	</main>
+	<slot />
 
 	<svelte:fragment slot="pageFooter">QuizPub: create, run and play pub quiz style events
 		&#x2022; by celep for Fishcord
