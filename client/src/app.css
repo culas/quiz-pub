@@ -2,7 +2,7 @@ html, body {
 	@apply h-full overflow-hidden;
 }
 
-button, button[type=button], button[type=submit], .button {
+button, button:not([class]), .button {
 	@apply btn variant-filled-primary uppercase font-bold;
 }
 

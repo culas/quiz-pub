@@ -46,40 +46,51 @@
 		);
 </script>
 
-<h1>Edit Quiz «{quiz.name}»</h1>
+<header class="flex flex-wrap items-start">
+	<h1 class="flex-1">Edit Quiz «{quiz.name}»</h1>
+	<button {disabled} title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
+</header>
 
 <form on:submit|preventDefault={save}>
-	<section>
+	<section class="card shadow-lg my-4 p-4">
 		<label class="label">
-			<h2>Name</h2>
+			<span>Name of the quiz</span>
 			<input class="input" type="text" bind:value={quiz.name} />
 		</label>
 	</section>
 
 	{#each quiz.rounds as round, rIdx}
-		<section class="round">
-			<label class="label">
-				<h2>Round</h2>
-				<input class="input" type="text" bind:value={round.name} />
-				<button type="button" on:click={() => removeRound(rIdx)}>delete round</button>
+		<section class="card shadow-lg my-4 p-4">
+			<h2 class="h2 mb-2">Round {rIdx + 1}</h2>
+			<label class="label mb-4">
+				<span>Name of this round</span>
+				<div class="flex gap-2">
+					<input class="input" type="text" placeholder="Round name" bind:value={round.name} />
+					<button type="button" class="variant-filled-error" on:click={() => removeRound(rIdx)}>delete round</button>
+				</div>
 			</label>
 
+			<hr class="my-4 opacity-50">
+
 			{#each round.questions as question, qIdx}
-				<label class="label">
-					<h3>Q{qIdx + 1}</h3>
-					<input class="input" type="text" bind:value={question} />
-					<button type="button" on:click={() => removeQuestion(rIdx, qIdx)}
-						>delete question</button
-					>
+				<label class="label mb-4">
+					<div class="flex gap-2">
+						<div class="input-group input-group-divider grid-cols-[auto_1fr]">
+							<div class="input-group-shim">Q{rIdx + 1}-{qIdx + 1}</div>
+							<input type="text" placeholder="Question" bind:value={question} />
+						</div>
+						<button type="button" class="variant-filled-error" on:click={() => removeQuestion(rIdx, qIdx)}>delete
+							question
+						</button>
+					</div>
 				</label>
 			{/each}
 			<button type="button" on:click={() => addQuestion(rIdx)}>add question</button>
 		</section>
 	{/each}
 
-	<section>
+	<section class="flex justify-between my-4">
 		<button type="button" on:click={addRound}>add round</button>
+		<button {disabled} title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
 	</section>
-
-	<button {disabled} type="submit">save</button>
 </form>
