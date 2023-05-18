@@ -62,7 +62,7 @@
 			{#if save.deleted}
 				<button on:click={() => restoreQuiz(save.id)}>restore</button>
 			{:else}
-				<a class="button" href="edit/{save.id}">edit</a>
+				<a class="btn variant-glass-primary" href="edit/{save.id}">edit</a>
 				<button on:click={() => runQuiz(save)}>run</button>
 				<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
 			{/if}
@@ -73,10 +73,3 @@
 <button on:click={() => (showDeleted = !showDeleted)}
 	>{showDeleted ? 'hide' : 'show'} deleted</button
 >
-
-<style>
-	div {
-		display: flex;
-		gap: 0.5rem;
-	}
-</style>

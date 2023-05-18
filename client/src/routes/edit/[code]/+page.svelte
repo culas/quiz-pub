@@ -61,14 +61,14 @@
 			<label>
 				<h2>Round</h2>
 				<input type="text" bind:value={round.name} />
-				<button type="button" class="warn" on:click={() => removeRound(rIdx)}>delete round</button>
+				<button type="button" on:click={() => removeRound(rIdx)}>delete round</button>
 			</label>
 
 			{#each round.questions as question, qIdx}
 				<label>
 					<h3>Q{qIdx + 1}</h3>
 					<input type="text" bind:value={question} />
-					<button type="button" class="warn" on:click={() => removeQuestion(rIdx, qIdx)}
+					<button type="button" on:click={() => removeQuestion(rIdx, qIdx)}
 						>delete question</button
 					>
 				</label>
@@ -83,23 +83,3 @@
 
 	<button {disabled} type="submit">save</button>
 </form>
-
-<style>
-	label {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-end;
-		margin-bottom: 1rem;
-		gap: 0.5rem;
-	}
-
-	label h2,
-	label h3 {
-		width: 100%;
-	}
-
-	label input {
-		width: auto;
-		flex-grow: 1;
-	}
-</style>
