@@ -105,7 +105,7 @@ export const quizMachine = () =>
 					],
 					players: (ctx, event) =>
 						ctx.players.map((p) =>
-							p.name === event.player ? { ...p, color: 'var(--color-primary)' } : p
+							p.name === event.player ? { ...p, color: 'var(--color-primary-500)' } : p
 						)
 				}),
 				reveal: assign({ answers: (ctx) => ctx.answers.map((a) => ({ ...a, revealed: true })) }),
