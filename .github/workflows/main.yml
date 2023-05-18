@@ -10,14 +10,20 @@ jobs:
       contents: read # Needed to clone the repository
 
     steps:
-      - name: Clone repository
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18.8.0'
-          cache: 'npm'
-          cache-dependency-path: './client/package-lock.json'
+          node-version: 20
+          run_install: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 8
 
       - name: Setup Deno
         uses: denoland/setup-deno@v1
@@ -34,8 +40,8 @@ jobs:
       
       - name: Build frontend
         run: |
-          npm ci --no-optional
-          npm run build
+          pnpm ci --no-optional
+          pnpm run build
         working-directory: ./client
 
       - name: Copy to dist folder
