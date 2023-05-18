@@ -51,7 +51,7 @@
 
 <header class="flex flex-wrap items-start">
 	<h1 class="flex-1">Quiz Saves</h1>
-	<button on:click={createNewQuiz}>create new quiz</button>
+	<button class="button variant-filled-primary" on:click={createNewQuiz}>create new quiz</button>
 </header>
 
 <p>Create and edit your own quizzes.</p>
@@ -66,12 +66,12 @@
 		</ul>
 		<footer class="card-footer flex flex-wrap gap-2">
 			{#if save.deleted}
-				<button on:click={() => restoreQuiz(save.id)}>restore</button>
+				<button class="button variant-filled" on:click={() => restoreQuiz(save.id)}>restore</button>
 			{:else}
-				<a class="button" href="edit/{save.id}">edit</a>
-				<button on:click={() => runQuiz(save)}>run</button>
+				<a class="button variant-filled-primary" href="edit/{save.id}">edit</a>
+				<button class="button variant-filled-primary" on:click={() => runQuiz(save)}>run</button>
 				<span class="flex-1"></span>
-				<button class="variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</button>
+				<button class="button variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</button>
 			{/if}
 		</footer>
 	</section>

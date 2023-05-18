@@ -48,7 +48,7 @@
 
 <header class="flex flex-wrap items-start">
 	<h1 class="flex-1">Edit Quiz «{quiz.name}»</h1>
-	<button {disabled} title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
+	<button {disabled} class="button variant-filled-primary" title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
 </header>
 
 <form on:submit|preventDefault={save}>
@@ -66,7 +66,8 @@
 				<span>Name of this round</span>
 				<div class="flex gap-2">
 					<input class="input" type="text" placeholder="Round name" bind:value={round.name} />
-					<button type="button" class="variant-filled-error" on:click={() => removeRound(rIdx)}>delete round</button>
+					<button type="button" class="button variant-filled-error" on:click={() => removeRound(rIdx)}>delete
+						round</button>
 				</div>
 			</label>
 
@@ -79,16 +80,17 @@
 							<div class="input-group-shim">Q{rIdx + 1}-{qIdx + 1}</div>
 							<input type="text" placeholder="Question" bind:value={question} />
 						</div>
-						<button type="button" class="variant-filled-error" on:click={() => removeQuestion(rIdx, qIdx)}>delete</button>
+						<button type="button" class="button variant-filled-error" on:click={() => removeQuestion(rIdx, qIdx)}>delete
+						</button>
 					</div>
 				</label>
 			{/each}
-			<button type="button" on:click={() => addQuestion(rIdx)}>add question</button>
+			<button type="button" class="button variant-filled-primary" on:click={() => addQuestion(rIdx)}>add question</button>
 		</section>
 	{/each}
 
 	<section class="flex justify-between my-4">
-		<button type="button" on:click={addRound}>add round</button>
-		<button {disabled} title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
+		<button type="button" class="button variant-filled-primary" on:click={addRound}>add round</button>
+		<button class="button variant-filled-primary" {disabled} title={disabled ? 'Not all fields filled' : null} type="submit">save</button>
 	</section>
 </form>

@@ -19,6 +19,6 @@
 			placeholder="CODE"
 			bind:value={joinCode}
 		/>
-		<button type="submit" disabled={joinCode.length !== codeLength}>JOIN</button>
+		<button class="button variant-filled-primary" type="submit" disabled={joinCode.length !== codeLength}>JOIN</button>
 	</label>
 </form>

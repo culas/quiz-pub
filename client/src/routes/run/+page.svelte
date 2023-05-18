@@ -24,7 +24,7 @@
 			<li>Join Code: <b>{quiz.context.joinCode}</b></li>
 		</ul>
 		<footer class="card-footer">
-			<a class="button" href="run/{quiz.context.adminCode}">Open</a>
+			<a class="button variant-filled-primary" href="run/{quiz.context.adminCode}">Open</a>
 		</footer>
 	</section>
 {:else}
