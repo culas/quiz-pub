@@ -79,9 +79,7 @@
 							<div class="input-group-shim">Q{rIdx + 1}-{qIdx + 1}</div>
 							<input type="text" placeholder="Question" bind:value={question} />
 						</div>
-						<button type="button" class="variant-filled-error" on:click={() => removeQuestion(rIdx, qIdx)}>delete
-							question
-						</button>
+						<button type="button" class="variant-filled-error" on:click={() => removeQuestion(rIdx, qIdx)}>delete</button>
 					</div>
 				</label>
 			{/each}
