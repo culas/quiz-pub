@@ -44,6 +44,7 @@
 	function changeDeletedFlag(id: string, deleted: boolean) {
 		$saves = [...$saves.map((save) => (save.id === id ? { ...save, deleted } : save))];
 	}
+
 	$: quizzes = $saves.filter((s) => !s.deleted || showDeleted).sort((s) => -s.date);
 </script>
 

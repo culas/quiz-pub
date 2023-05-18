@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+
 	let joinCode = '';
 	const codeLength = 6;
 </script>

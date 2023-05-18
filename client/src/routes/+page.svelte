@@ -1,6 +1,7 @@
 <script lang="ts">
 	import JoinForm from '$lib/components/JoinForm.svelte';
 	import { title } from '$lib/stores/title.store';
+
 	$title = '';
 </script>
 

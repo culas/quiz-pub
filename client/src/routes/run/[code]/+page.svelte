@@ -7,12 +7,7 @@
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
-	import type {
-		AnswerEvent,
-		JoinEvent,
-		LeaveEvent,
-		StateEvent
-	} from '$server-interface/events.model';
+	import type { AnswerEvent, JoinEvent, LeaveEvent, StateEvent } from '$server-interface/events.model';
 	import { useMachine } from '@xstate/svelte';
 	import { persisted } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
@@ -61,6 +56,7 @@
 	}
 
 	$: sendQuizStateToPlayers($state);
+
 	function sendQuizStateToPlayers(state: State<QuizState, StateEvent>) {
 		$socket = createQuizStateMessage(state.context, state.matches('lobby'), state.done);
 	}
@@ -93,10 +89,11 @@
 				class="warn"
 				use:tooltip
 				data-tooltip="Will end the round without waiting for all answers!"
-				on:click={() => send({ type: 'SKIPANSWERS' })}>skip</button
+				on:click={() => send({ type: 'SKIPANSWERS' })}>skip
+			</button
 			>
 			<span
-				>waiting for <b>{waitingForPlayers.length}</b>
+			>waiting for <b>{waitingForPlayers.length}</b>
 				{waitingForPlayers.length === 1 ? 'player' : 'players'} to submit their answers</span
 			>
 		{/if}
@@ -113,7 +110,8 @@
 			/>
 			<button
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}
-				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores</button
+				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores
+			</button
 			>
 		{/if}
 	{:else if $qService.matches('result')}

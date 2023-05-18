@@ -23,11 +23,13 @@
 			$socket = { type: 'JOIN', name: newName };
 		}
 	}
+
 	join($name);
 
 	$: updateQuiz($socket);
 
 	let quizState: QuizStateMessage;
+
 	function updateQuiz(msg: QuizStateMessage | JoinEvent | AnswerEvent) {
 		if (msg?.type === 'QUIZSTATE' && 'done' in msg) {
 			quizState = { ...msg };
@@ -38,6 +40,7 @@
 	function sendAnswers(answers: string[]) {
 		$socket = { type: 'ANSWER', player: $name, answers };
 	}
+
 	$: submitted = quizState?.answers.some(
 		(a) => a.roundId === quizState.currentRound && a.player === $name
 	);
