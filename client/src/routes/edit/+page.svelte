@@ -8,6 +8,7 @@
 	import { createQuizContext } from '$lib/utils/create-quiz-state';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
+	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import { persisted } from 'svelte-local-storage-store';
 
 	$: showDeleted = false;
@@ -48,28 +49,30 @@
 	$: quizzes = $saves.filter((s) => !s.deleted || showDeleted).sort((s) => -s.date);
 </script>
 
-<h1>Quiz Saves</h1>
-
-<button on:click={createNewQuiz}>create new quiz</button>
+<header class="flex flex-wrap items-center mb-4">
+	<h1 class="mb-0 flex-1">Quiz Saves</h1>
+	<button on:click={createNewQuiz}>create new quiz</button>
+</header>
 
 {#each quizzes as save}
-	<section class:disabled={save.deleted}>
-		<h2>{save.name}</h2>
-		<p>Rounds: {save.rounds.length}</p>
-		<p>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</p>
-		<p>Last save: {new Date(save.date).toLocaleString()}</p>
-		<div>
+	<section class="card shadow-lg my-4" class:opacity-60={save.deleted}>
+		<h2 class="h2 card-header">{save.name}</h2>
+		<ul class="p-4 list-disc list-inside">
+			<li>Rounds: {save.rounds.length}</li>
+			<li>Questions: {save.rounds.reduce((acc, r) => acc + r.questions.length, 0)}</li>
+			<li>Last save: {new Date(save.date).toLocaleString()}</li>
+		</ul>
+		<div class="card-footer flex flex-wrap gap-2">
 			{#if save.deleted}
 				<button on:click={() => restoreQuiz(save.id)}>restore</button>
 			{:else}
-				<a class="btn variant-glass-primary" href="edit/{save.id}">edit</a>
+				<a class="button" href="edit/{save.id}">edit</a>
 				<button on:click={() => runQuiz(save)}>run</button>
-				<button class="warn" on:click={() => deleteQuiz(save.id)}>delete</button>
+				<span class="flex-1"></span>
+				<button class="variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</button>
 			{/if}
 		</div>
 	</section>
 {/each}
 
-<button on:click={() => (showDeleted = !showDeleted)}
-	>{showDeleted ? 'hide' : 'show'} deleted</button
->
+<SlideToggle name="slider-label" active="bg-error-500" bind:checked={showDeleted}>Show deleted quizzes</SlideToggle>
