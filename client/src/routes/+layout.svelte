@@ -1,5 +1,7 @@
 <script>
-	import DarkmodeToggle from '$lib/components/DarkmodeToggle.svelte';
+	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+	import '@skeletonlabs/skeleton/styles/skeleton.css';
+	import '../app.postcss';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import { fullTitle } from '$lib/stores/title.store';
 
