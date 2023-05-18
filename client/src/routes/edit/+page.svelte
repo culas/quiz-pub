@@ -8,7 +8,7 @@
 	import { createQuizContext } from '$lib/utils/create-quiz-state';
 	import { getRunAdminCode } from '$lib/utils/get-run-admin-code';
 	import { randomId } from '$lib/utils/random-id';
-	import { writable } from 'svelte-local-storage-store';
+	import { persisted } from 'svelte-local-storage-store';
 
 	$: showDeleted = false;
 	$title = 'Create';
@@ -17,7 +17,9 @@
 		const code = getRunAdminCode(save.id);
 		if (code) {
 			$runCodes = [...$runCodes, code];
-			writable(code, {}).set(quizMachine().withContext(createQuizContext(save, code)).initialState);
+			persisted(code, {}).set(
+				quizMachine().withContext(createQuizContext(save, code)).initialState
+			);
 			goto(`run/${code}`);
 		}
 	}

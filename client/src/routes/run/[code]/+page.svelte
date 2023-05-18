@@ -14,12 +14,12 @@
 		StateEvent
 	} from '$server-interface/events.model';
 	import { useMachine } from '@xstate/svelte';
-	import { writable } from 'svelte-local-storage-store';
+	import { persisted } from 'svelte-local-storage-store';
 	import type { State } from 'xstate';
 	import Lobby from './Lobby.svelte';
 	import Result from './Result.svelte';
 
-	const state = writable($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
+	const state = persisted($page.params.code, {} as State<QuizState, StateEvent, any, any, any>);
 
 	const socket = connectSocket<QuizStateMessage | JoinEvent | LeaveEvent | AnswerEvent>(
 		new Map([

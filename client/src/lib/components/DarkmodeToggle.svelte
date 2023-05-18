@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { writable } from 'svelte-local-storage-store';
+	import { persisted } from 'svelte-local-storage-store';
 
 	const STORAGE_KEY = 'darkmode';
 	const DARK_PREFERENCE = '(prefers-color-scheme: dark)';
 
 	const prefersDarkThemes = () => window.matchMedia(DARK_PREFERENCE).matches;
-	const darkmode = writable(STORAGE_KEY, prefersDarkThemes());
+	const darkmode = persisted(STORAGE_KEY, prefersDarkThemes());
 
 	const toggleTheme = () => {
 		$darkmode = !$darkmode;

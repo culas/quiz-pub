@@ -9,9 +9,9 @@
 	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinEvent } from '$server-interface/events.model';
-	import { writable } from 'svelte-local-storage-store';
+	import { persisted } from 'svelte-local-storage-store';
 
-	const name = writable($page.params.code, '');
+	const name = persisted($page.params.code, '');
 	const socket = connectSocket<QuizStateMessage | JoinEvent | AnswerEvent>(
 		new Map([['joinCode', $page.params.code]])
 	);
