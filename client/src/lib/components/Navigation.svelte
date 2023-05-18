@@ -1,31 +1,22 @@
 <script>
 	import { page } from '$app/stores';
+
+	const links = ['play', 'edit', 'run'];
 </script>
 
 <nav>
-	<ul>
-		<li>
-			<a href="/play" class:active={$page.url.pathname.includes('play')}>play</a>
-		</li>
-		<li>
-			<a href="/edit" class:active={$page.url.pathname.includes('edit')}>create</a>
-		</li>
-		<li>
-			<a href="/run" class:active={$page.url.pathname.includes('run')}>run</a>
-		</li>
+	<ul class="flex gap-2">
+		{#each links as link}
+			<li>
+				<a class="btn hover:variant-soft" href="/{link}"
+				   class:active={$page.url.pathname.includes(link)}>{link}</a>
+			</li>
+		{/each}
 	</ul>
 </nav>
 
 <style>
-	nav {
-		flex-grow: 1;
-	}
-
-	ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		gap: 1rem;
+	.active {
+		@apply variant-filled;
 	}
 </style>

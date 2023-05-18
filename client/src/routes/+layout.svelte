@@ -4,7 +4,7 @@
 	import '../app.css';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import { fullTitle } from '$lib/stores/title.store';
-	import { AppShell, LightSwitch, setInitialClassState } from '@skeletonlabs/skeleton';
+	import { AppBar, AppShell, LightSwitch, setInitialClassState } from '@skeletonlabs/skeleton';
 
 	$: document.title = $fullTitle;
 	setInitialClassState();
@@ -12,9 +12,15 @@
 
 <AppShell>
 	<svelte:fragment slot="header">
-		<a href="/">QuizPub</a>
-		<Navigation />
-		<LightSwitch></LightSwitch>
+		<AppBar class="shadow-xl">
+			<svelte:fragment slot="lead">
+				<a class="font-bold text-xl" href="/">QuizPub</a>
+			</svelte:fragment>
+			<Navigation />
+			<svelte:fragment slot="trail">
+				<LightSwitch></LightSwitch>
+			</svelte:fragment>
+		</AppBar>
 	</svelte:fragment>
 
 	<main>
