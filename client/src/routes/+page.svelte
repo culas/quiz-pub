@@ -14,9 +14,9 @@
 <p>Run your own quizzes:</p>
 <ul>
 	<li>
-		<a href="/edit">create and edit quizzes</a>
+		<a class="anchor" href="/edit">create and edit quizzes</a>
 	</li>
 	<li>
-		<a href="/run">run quizzes</a>
+		<a class="anchor" href="/run">run quizzes</a>
 	</li>
 </ul>
