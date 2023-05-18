@@ -50,24 +50,24 @@
 
 <form on:submit|preventDefault={save}>
 	<section>
-		<label>
+		<label class="label">
 			<h2>Name</h2>
-			<input type="text" bind:value={quiz.name} />
+			<input class="input" type="text" bind:value={quiz.name} />
 		</label>
 	</section>
 
 	{#each quiz.rounds as round, rIdx}
 		<section class="round">
-			<label>
+			<label class="label">
 				<h2>Round</h2>
-				<input type="text" bind:value={round.name} />
+				<input class="input" type="text" bind:value={round.name} />
 				<button type="button" on:click={() => removeRound(rIdx)}>delete round</button>
 			</label>
 
 			{#each round.questions as question, qIdx}
-				<label>
+				<label class="label">
 					<h3>Q{qIdx + 1}</h3>
-					<input type="text" bind:value={question} />
+					<input class="input" type="text" bind:value={question} />
 					<button type="button" on:click={() => removeQuestion(rIdx, qIdx)}
 						>delete question</button
 					>
