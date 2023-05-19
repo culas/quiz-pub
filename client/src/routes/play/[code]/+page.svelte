@@ -4,12 +4,14 @@
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import NameForm from '$lib/components/NameForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import Standings from '$lib/components/Standings.svelte';
 	import Steps from '$lib/components/Steps.svelte';
 	import type { QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinEvent } from '$server-interface/events.model';
+	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { persisted } from 'svelte-local-storage-store';
 
 	const name = persisted($page.params.code, '');
@@ -76,6 +78,7 @@
 			<b>{quizState.questions.length}</b> questions.
 		</p>
 		<p>Waiting for players to join and the host to start the quiz.</p>
+		<Spinner/>
 	{:else}
 		<h2>Round {quizState.currentRound + 1}: {quizState.rounds.at(quizState.currentRound)?.text}</h2>
 		{#if submitted}
