@@ -3,6 +3,7 @@
 
 	let joinCode = '';
 	const codeLength = 6;
+	$: disabled = joinCode.length !== codeLength;
 </script>
 
 <form on:submit|preventDefault={() => goto('play/' + joinCode.toUpperCase())}
@@ -19,6 +20,6 @@
 			placeholder="CODE"
 			bind:value={joinCode}
 		/>
-		<button class="button variant-filled-primary" type="submit" disabled={joinCode.length !== codeLength}>JOIN</button>
+		<button class="button variant-filled-primary" {disabled} type="submit">Join</button>
 	</label>
 </form>

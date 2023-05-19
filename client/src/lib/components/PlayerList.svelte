@@ -14,7 +14,7 @@
 				{#each players as p}
 					<ColorPill color={p.color}>{p.name}</ColorPill>
 				{:else}
-					<p class="my-4 italic opacity-50">No players yet…</p>
+					<p class="italic opacity-50">No players yet…</p>
 				{/each}
 			</div>
 		</AccordionItem>
