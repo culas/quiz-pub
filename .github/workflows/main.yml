@@ -31,7 +31,7 @@ jobs:
           deno-version: v1.x
 
       - name: Type check backend
-        run: deno check server.ts
+        run: deno check server.ts --unstable
         working-directory: server
 
       - name: Test backend
