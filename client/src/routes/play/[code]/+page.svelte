@@ -80,7 +80,7 @@
 		<p>Waiting for players to join and the host to start the quiz.</p>
 		<Spinner/>
 	{:else}
-		<h2>Round {quizState.currentRound + 1}: {quizState.rounds.at(quizState.currentRound)?.text}</h2>
+		<h2 class="h2 my-4">Round {quizState.currentRound + 1}: {quizState.rounds.at(quizState.currentRound)?.text}</h2>
 		{#if submitted}
 			<AnswersList
 				questions={currentQ}

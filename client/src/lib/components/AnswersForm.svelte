@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	export let questions: string[];
+	export let questions: string[] = [];
 	const dispatch = createEventDispatcher<{ submit: string[] }>();
 
 	let answers: string[] = [];
@@ -18,16 +18,24 @@
 		answers.some((a) => a.length < minlength || a.length > maxlength);
 </script>
 
-<form on:submit|preventDefault={submit}>
-	{#each questions as q, i}
-		<h3>{i + 1}) {q}</h3>
-		<input type="text" {minlength} {maxlength} bind:value={answers[i]} />
-	{/each}
-	<button {disabled} type="submit">send answers</button>
+<form on:submit|preventDefault={submit}
+      class="card shadow-lg my-4">
+	<div class="pt-4 px-4">
+		{#each questions as q, i}
+			<label class="flex flex-wrap items-end mb-4 label">
+				<span class="w-full">{q}</span>
+				<div class="input-group input-group-divider grid-cols-[auto_1fr]">
+					<div class="input-group-shim">{i + 1}</div>
+					<input
+						type="text"
+						{minlength}
+						{maxlength}
+						bind:value={answers[i]} />
+				</div>
+			</label>
+		{/each}
+	</div>
+	<footer class="card-footer flex justify-end">
+		<button class="button variant-filled-primary" {disabled} type="submit">send answers</button>
+	</footer>
 </form>
-
-<style>
-	input {
-		margin-bottom: 0.5rem;
-	}
-</style>
