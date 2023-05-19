@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { copy } from '$lib/actions/copy.action';
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import type { QuizState } from '$lib/models/quiz-state.model';
+	import { clipboard } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: QuizState;
@@ -10,14 +10,21 @@
 </script>
 
 <p>
-	Invite players with the following code (click it to copy invite link):
-	<b use:tooltip data-tooltip="click to copy" use:copy={location.origin + '/play/' + state.joinCode}
-	>{state.joinCode}</b
-	>
+	Invite players with the following code:
+	<button use:tooltip
+	        data-tooltip="click to copy invite URL"
+	        use:clipboard={`${location.origin}/play/${state.joinCode}`}
+	        class="btn btn-sm font-bold variant-soft">
+		{state.joinCode}
+	</button>
 </p>
 
 <p>
-	The quiz has <b>{state.rounds.length}</b> rounds and a total of <b>{state.questions.length}</b> questions.
+	This quiz has <b>{state.rounds.length}</b> rounds and a total of <b>{state.questions.length}</b> questions.
 </p>
 
-<button disabled={state.players.length === 0} on:click={() => dispatch('start')}>start quiz</button>
+<button class="button variant-filled-primary mt-4 float-right"
+        disabled={state.players.length === 0}
+        on:click={() => dispatch('start')}>
+	start quiz
+</button>
