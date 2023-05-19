@@ -5,6 +5,7 @@
 	import NameForm from '$lib/components/NameForm.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import Standings from '$lib/components/Standings.svelte';
+	import Steps from '$lib/components/Steps.svelte';
 	import type { QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
@@ -51,6 +52,13 @@
 
 <h1>{quizState?.name ?? 'Quiz'}</h1>
 <PlayerList players={quizState?.players} />
+
+{#if quizState}
+	<Steps active={quizState.questions.length === 0 ? 0 : quizState.currentRound + 1}
+	       startIndex={0}
+	       steps={['Lobby', ...quizState.rounds.map(r => r.text)]} />
+{/if}
+
 <div>
 	{#if quizState === undefined}
 		<p>

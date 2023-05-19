@@ -3,6 +3,7 @@
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import Steps from '$lib/components/Steps.svelte';
 	import type { QuizState, QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { title } from '$lib/stores/title.store';
@@ -73,6 +74,10 @@
 <h1>{$qService.context.name}</h1>
 
 <PlayerList players={$qService.context.players} />
+
+<Steps active={$qService.matches('lobby') ? 0 : cr + 1}
+       startIndex={0}
+       steps={['Lobby', ...$qService.context.rounds.map(r => r.text)]} />
 
 <div>
 	{#if $qService.matches('lobby')}
