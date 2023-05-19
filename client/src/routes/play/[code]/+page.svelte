@@ -54,6 +54,7 @@
 <PlayerList players={quizState?.players} />
 
 {#if quizState}
+	<!-- TODO: players only get current round information, stepper is pointless like this -->
 	<Steps active={quizState.questions.length === 0 ? 0 : quizState.currentRound + 1}
 	       startIndex={0}
 	       steps={['Lobby', ...quizState.rounds.map(r => r.text)]} />
