@@ -40,7 +40,7 @@ jobs:
       
       - name: Build frontend
         run: |
-          pnpm ci --no-optional
+          pnpm install --frozen-lockfile
           pnpm run build
         working-directory: ./client
 
