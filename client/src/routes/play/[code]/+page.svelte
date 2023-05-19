@@ -11,7 +11,6 @@
 	import { title } from '$lib/stores/title.store';
 	import { connectSocket } from '$lib/utils/websocket';
 	import type { AnswerEvent, JoinEvent } from '$server-interface/events.model';
-	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { persisted } from 'svelte-local-storage-store';
 
 	const name = persisted($page.params.code, '');
@@ -68,7 +67,7 @@
 			Waiting for Quiz Informations, Quiz with the code <b>{$page.params.code}</b> might not exist.
 		</p>
 	{:else if quizState.done}
-		<h2>Final Scores</h2>
+		<h2 class="h2 my-4">Final Scores</h2>
 		<Standings rounds={quizState.rounds} answers={quizState.answers} player={$name} />
 	{:else if !quizState.players.some((p) => p.name === $name)}
 		<NameForm on:submit={(e) => join(e.detail)} />
@@ -78,7 +77,7 @@
 			<b>{quizState.questions.length}</b> questions.
 		</p>
 		<p>Waiting for players to join and the host to start the quiz.</p>
-		<Spinner/>
+		<Spinner />
 	{:else}
 		<h2 class="h2 my-4">Round {quizState.currentRound + 1}: {quizState.rounds.at(quizState.currentRound)?.text}</h2>
 		{#if submitted}
@@ -89,7 +88,7 @@
 				)}
 				showScores={true}
 			/>
-			<p>Waiting for other players to submit their answers and the host to score them.</p>
+			<p class="italic opacity-50">Waiting for other players to submit their answers and the host to score them.</p>
 		{:else}
 			<AnswersForm questions={currentQ} on:submit={(answers) => sendAnswers(answers.detail)} />
 		{/if}
