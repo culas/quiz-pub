@@ -20,8 +20,9 @@
 		.sort((a, b) => b.scores - a.scores);
 </script>
 
-<table>
-	<thead>
+<div class="table-container shadow-lg my-4">
+	<table class="table table-hover">
+		<thead>
 		<tr>
 			<th>Place</th>
 			<th>Player</th>
@@ -30,8 +31,8 @@
 			{/each}
 			<th class="right">Total</th>
 		</tr>
-	</thead>
-	<tbody>
+		</thead>
+		<tbody>
 		{#each scores as score, i}
 			<tr class:highlight={score.player === player}>
 				<td>{i + 1}</td>
@@ -42,35 +43,12 @@
 				<td class="right"><b>{score.scores}</b></td>
 			</tr>
 		{/each}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+</div>
 
 <style>
-	table {
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	thead tr,
-	tbody tr:hover {
-		background-color: var(--color-light);
-	}
-
-	tr.highlight {
-		color: var(--color-primary);
-		font-weight: bold;
-	}
-
-	th {
-		text-align: left;
-	}
-
-	.right {
-		text-align: right;
-	}
-
-	th,
-	td {
-		padding: 0.25rem;
+	.table .highlight {
+		@apply variant-ghost-primary;
 	}
 </style>
