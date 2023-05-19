@@ -16,18 +16,18 @@ export const tooltip = (element: HTMLElement) => {
 			}
 		});
 
-		const tooltipDiv = document.querySelectorAll<HTMLElement>('.tooltip');
+		const tooltipDiv = document.querySelector<HTMLElement>('#tooltip');
 		const parentCoords = element.getBoundingClientRect();
 
-		tooltipDiv.forEach((i) => {
-			const top = parentCoords.top + window.scrollY - i.offsetHeight - 10;
-			const center = parentCoords.left + window.scrollX + (element.offsetWidth - i.offsetWidth) / 2;
+		if (tooltipDiv) {
+			const top = parentCoords.top + window.scrollY - tooltipDiv.offsetHeight - 10;
+			const center = parentCoords.left + window.scrollX + (element.offsetWidth - tooltipDiv.offsetWidth) / 2;
 
 			tooltipComponent?.$set({
 				xAxis: center,
 				yAxis: top
 			});
-		});
+		}
 	};
 
 	const removeTooltip = () => {

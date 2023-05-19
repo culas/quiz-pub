@@ -4,22 +4,26 @@
 	export let yAxis: number;
 </script>
 
-<div class="tooltip" role="tooltip" style="left: {xAxis}px; top: {yAxis}px;">
+<div id="tooltip" class="absolute card px-2 py-1 text-center text-sm variant-filled opacity-80"
+     style="left: {xAxis}px; top: {yAxis}px;">
 	{tooltipText}
+	<div class="arrow variant-filled"></div>
 </div>
 
 <style>
-	.tooltip {
-		color: white;
+	#tooltip {
 		min-width: 80px;
 		max-width: 250px;
+	}
+
+	.arrow {
+		--size: .5rem;
 		position: absolute;
-		padding: 0.5rem 0.75rem;
-		text-align: center;
-		font-weight: 400;
-		font-size: 0.75rem;
-		line-height: 1.2;
-		border-radius: 0.25rem;
-		background-color: rgba(0, 0, 0, 0.7);
+		left: calc(50% - calc(var(--size) / 2));
+		top: calc(100% - calc(var(--size) / 2));
+		height: var(--size);
+		width: var(--size);
+		transform: rotate(45deg);
+		z-index: -1;
 	}
 </style>
