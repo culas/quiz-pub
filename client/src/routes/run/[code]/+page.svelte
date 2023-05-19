@@ -3,6 +3,7 @@
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
+	import QuestionsList from '$lib/components/QuestionsList.svelte';
 	import Steps from '$lib/components/Steps.svelte';
 	import type { QuizState, QuizStateMessage } from '$lib/models/quiz-state.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
@@ -83,21 +84,19 @@
 	{#if $qService.matches('lobby')}
 		<Lobby state={$qService.context} on:start={() => send('START')} />
 	{:else if $qService.matches('round')}
-		<h2>Round {cr + 1}: {$qService.context.rounds[cr].text}</h2>
+		<h2 class="h2 my-4">Round {cr + 1}: {$qService.context.rounds[cr].text}</h2>
 		{#if $qService.matches('round.answering') || $qService.matches('round.revealing')}
-			{#each $qService.context.questions.filter((q) => q.roundId === cr) as q}
-				<h3>{q.id + 1}) {q.text}</h3>
-			{/each}
+			<QuestionsList questions={$qService.context.questions.filter((q) => q.roundId === cr)}/>
 		{/if}
 		{#if $qService.matches('round.answering')}
 			<button
-				class="warn"
+				class="button variant-filled-error mr-2"
 				use:tooltip
 				data-tooltip="Will end the round without waiting for all answers!"
 				on:click={() => send({ type: 'SKIPANSWERS' })}>skip
 			</button
 			>
-			<span
+			<span class="italic opacity-50"
 			>waiting for <b>{waitingForPlayers.length}</b>
 				{waitingForPlayers.length === 1 ? 'player' : 'players'} to submit their answers</span
 			>
