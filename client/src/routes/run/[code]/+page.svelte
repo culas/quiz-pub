@@ -38,9 +38,13 @@
 		return {
 			...state,
 			done,
-			rounds: state.rounds.filter((r) => r.id <= state.currentRound),
-			questions: state.questions.filter((q) => !lobby && q.roundId <= state.currentRound),
-			answers: state.answers.map((a) => (a.revealed ? a : { ...a, text: '' })),
+			rounds: state.rounds,
+			questions: state.questions.filter((q) => !lobby && q.roundId === state.currentRound),
+			answers: done
+				? state.answers.map(a => ({ ...a, text: '' }))
+				: state.answers
+					.filter(a => a.roundId === state.currentRound)
+					.map((a) => (a.revealed ? a : { ...a, text: '' })),
 			type: 'QUIZSTATE'
 		};
 	}
