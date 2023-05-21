@@ -24,7 +24,7 @@
 	This quiz has <b>{state.rounds.length}</b> rounds and a total of <b>{state.questions.length}</b> questions.
 </p>
 
-<Button class="mt-4 float-right"
+<Button class="variant-filled-primary mt-4 float-right"
         disabled={state.players.length === 0}
         on:click={() => dispatch('start')}>
 	start quiz

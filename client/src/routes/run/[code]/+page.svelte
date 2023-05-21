@@ -102,7 +102,7 @@
 			</span>
 		{/if}
 		{#if $qService.matches('round.revealing')}
-			<Button class="float-right" on:click={() => send('REVEAL')}>reveal answers</Button>
+			<Button class="variant-filled-primary float-right" on:click={() => send('REVEAL')}>reveal answers</Button>
 		{/if}
 		{#if $qService.matches('round.scoring')}
 			<AnswersList
@@ -113,7 +113,7 @@
 				on:score={(e) => send({ type: 'SCORE', ...e.detail, rIdx: cr })}
 			/>
 			<Button
-				class="float-right"
+				class="variant-filled-primary float-right"
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}
 				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores
 			</Button>
