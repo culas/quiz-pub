@@ -1,11 +1,5 @@
+@tailwind components;
+
 html, body {
 	@apply h-full overflow-hidden;
-}
-
-.button {
-	@apply btn uppercase font-bold;
-}
-
-h1 {
-	@apply h1 mb-4;
 }

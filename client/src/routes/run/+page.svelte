@@ -11,7 +11,7 @@
 		.sort((r) => (r.done ? 1 : -1));
 </script>
 
-<h1>Quiz Runs</h1>
+<h1 class="h1 mb-4">Quiz Runs</h1>
 
 <p>Quizzes you are currently running or have run in the past.</p>
 
@@ -24,7 +24,7 @@
 			<li>Join Code: <b>{quiz.context.joinCode}</b></li>
 		</ul>
 		<footer class="card-footer">
-			<a class="button variant-filled-primary" href="run/{quiz.context.adminCode}">Open</a>
+			<a class="btn uppercase font-bold variant-filled-primary" href="run/{quiz.context.adminCode}">Open</a>
 		</footer>
 	</section>
 {:else}

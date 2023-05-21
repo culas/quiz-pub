@@ -34,7 +34,7 @@
 		</thead>
 		<tbody>
 		{#each scores as score, i}
-			<tr class:highlight={score.player === player}>
+			<tr class:!variant-ghost-primary={score.player === player}>
 				<td>{i + 1}</td>
 				<td>{score.player}</td>
 				{#each score.rounds as round}
@@ -46,9 +46,3 @@
 		</tbody>
 	</table>
 </div>
-
-<style>
-	.table .highlight {
-		@apply variant-ghost-primary;
-	}
-</style>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { tooltip } from '$lib/actions/tooltip.action';
+	import Button from '$lib/components/Button.svelte';
 	import type { QuizState } from '$lib/models/quiz-state.model';
 	import { clipboard } from '@skeletonlabs/skeleton';
 	import { createEventDispatcher } from 'svelte';
@@ -23,8 +24,8 @@
 	This quiz has <b>{state.rounds.length}</b> rounds and a total of <b>{state.questions.length}</b> questions.
 </p>
 
-<button class="button variant-filled-primary mt-4 float-right"
+<Button class="mt-4 float-right"
         disabled={state.players.length === 0}
         on:click={() => dispatch('start')}>
 	start quiz
-</button>
+</Button>

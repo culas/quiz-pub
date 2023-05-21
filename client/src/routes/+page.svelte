@@ -5,7 +5,7 @@
 	$title = '';
 </script>
 
-<h1>QuizPub</h1>
+<h1 class="h1 mb-4">QuizPub</h1>
 
 <p>Create, run and play pub quizzes with your friends.</p>
 

@@ -51,7 +51,7 @@
 		.map((q) => q.text);
 </script>
 
-<h1>{quizState?.name ?? 'Quiz'}</h1>
+<h1 class="h1 mb-4">{quizState?.name ?? 'Quiz'}</h1>
 <PlayerList players={quizState?.players} />
 
 {#if quizState}

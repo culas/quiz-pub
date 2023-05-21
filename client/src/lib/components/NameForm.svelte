@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	let name = '';
@@ -21,7 +22,7 @@
 			placeholder="Name"
 			bind:value={name}
 		/>
-		<button class="button variant-filled-primary" {disabled} type="submit">Join</button>
+		<Button {disabled} type="submit">Join</Button>
 	</label>
 	<p class="card-footer">Note: your name will be visible to the host and all other players.</p>
 </form>

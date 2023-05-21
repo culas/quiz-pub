@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Button from '$lib/components/Button.svelte';
 
 	let joinCode = '';
 	const codeLength = 6;
@@ -20,6 +21,6 @@
 			placeholder="CODE"
 			bind:value={joinCode}
 		/>
-		<button class="button variant-filled-primary" {disabled} type="submit">Join</button>
+		<Button {disabled} type="submit">Join</Button>
 	</label>
 </form>

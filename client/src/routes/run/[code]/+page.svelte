@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { tooltip } from '$lib/actions/tooltip.action';
 	import AnswersList from '$lib/components/AnswersList.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import PlayerList from '$lib/components/PlayerList.svelte';
 	import QuestionsList from '$lib/components/QuestionsList.svelte';
 	import Steps from '$lib/components/Steps.svelte';
@@ -72,7 +73,7 @@
 	);
 </script>
 
-<h1>{$qService.context.name}</h1>
+<h1 class="h1 mb-4">{$qService.context.name}</h1>
 
 <PlayerList players={$qService.context.players} />
 
@@ -86,23 +87,22 @@
 	{:else if $qService.matches('round')}
 		<h2 class="h2 my-4">Round {cr + 1}: {$qService.context.rounds[cr].text}</h2>
 		{#if $qService.matches('round.answering') || $qService.matches('round.revealing')}
-			<QuestionsList questions={$qService.context.questions.filter((q) => q.roundId === cr)}/>
+			<QuestionsList questions={$qService.context.questions.filter((q) => q.roundId === cr)} />
 		{/if}
 		{#if $qService.matches('round.answering')}
 			<button
-				class="button variant-filled-error mr-2"
+				class="btn uppercase font-bold variant-filled-error mr-2"
+				type="button"
 				use:tooltip
 				data-tooltip="Will end the round without waiting for all answers!"
 				on:click={() => send({ type: 'SKIPANSWERS' })}>skip
-			</button
-			>
-			<span class="italic opacity-50"
-			>waiting for <b>{waitingForPlayers.length}</b>
-				{waitingForPlayers.length === 1 ? 'player' : 'players'} to submit their answers</span
-			>
+			</button>
+			<span class="italic opacity-50">
+				waiting for <b>{waitingForPlayers.length}</b> {waitingForPlayers.length === 1 ? 'player' : 'players'} to submit their answers
+			</span>
 		{/if}
 		{#if $qService.matches('round.revealing')}
-			<button class="button variant-filled-primary float-right" on:click={() => send('REVEAL')}>reveal answers</button>
+			<Button class="float-right" on:click={() => send('REVEAL')}>reveal answers</Button>
 		{/if}
 		{#if $qService.matches('round.scoring')}
 			<AnswersList
@@ -112,12 +112,11 @@
 				showScoring={$qService.matches('round.scoring')}
 				on:score={(e) => send({ type: 'SCORE', ...e.detail, rIdx: cr })}
 			/>
-			<button
-				class="button variant-filled-primary float-right"
+			<Button
+				class="float-right"
 				disabled={$qService.context.answers.some((a) => a.score === undefined)}
 				on:click={() => send({ type: 'CONFIRMSCORE' })}>confirm scores
-			</button
-			>
+			</Button>
 		{/if}
 	{:else if $qService.matches('result')}
 		<Result state={$qService.context} />

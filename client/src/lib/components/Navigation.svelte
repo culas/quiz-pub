@@ -9,14 +9,8 @@
 		{#each links as link}
 			<li>
 				<a class="btn hover:variant-soft" href="/{link}"
-				   class:active={$page.url.pathname.includes(link)}>{link}</a>
+				   class:variant-filled={$page.url.pathname.includes(link)}>{link}</a>
 			</li>
 		{/each}
 	</ul>
 </nav>
-
-<style>
-	.active {
-		@apply variant-filled;
-	}
-</style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '$lib/components/Button.svelte';
 	import { createEventDispatcher } from 'svelte';
 
 	export let questions: string[] = [];
@@ -36,6 +37,6 @@
 		{/each}
 	</div>
 	<footer class="card-footer flex justify-end">
-		<button class="button variant-filled-primary" {disabled} type="submit">send answers</button>
+		<Button {disabled} type="submit">send answers</Button>
 	</footer>
 </form>

@@ -5,7 +5,7 @@
 	$title = 'Play';
 </script>
 
-<h1>Play Quiz</h1>
+<h1 class="h1 mb-4">Play Quiz</h1>
 
 <p>Enter the code you got from the host to join a quiz.</p>
 

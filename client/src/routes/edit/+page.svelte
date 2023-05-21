@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Button from '$lib/components/Button.svelte';
 	import type { QuizSave } from '$lib/models/quiz-save.model';
 	import { quizMachine } from '$lib/stores/quiz-state-machine';
 	import { runCodes } from '$lib/stores/runs.store';
@@ -50,8 +51,8 @@
 </script>
 
 <header class="flex flex-wrap items-start">
-	<h1 class="flex-1">Quiz Saves</h1>
-	<button class="button variant-filled-primary" on:click={createNewQuiz}>create new quiz</button>
+	<h1 class="h1 mb-4 flex-1">Quiz Saves</h1>
+	<Button on:click={createNewQuiz}>create new quiz</Button>
 </header>
 
 <p>Create and edit your own quizzes.</p>
@@ -66,12 +67,12 @@
 		</ul>
 		<footer class="card-footer flex flex-wrap gap-2">
 			{#if save.deleted}
-				<button class="button variant-filled" on:click={() => restoreQuiz(save.id)}>restore</button>
+				<Button class="variant-filled" on:click={() => restoreQuiz(save.id)}>restore</Button>
 			{:else}
-				<a class="button variant-filled-primary" href="edit/{save.id}">edit</a>
-				<button class="button variant-filled-primary" on:click={() => runQuiz(save)}>run</button>
+				<a class="btn uppercase font-bold variant-filled-primary" href="edit/{save.id}">edit</a>
+				<Button on:click={() => runQuiz(save)}>run</Button>
 				<span class="flex-1"></span>
-				<button class="button variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</button>
+				<Button class="variant-filled-error" on:click={() => deleteQuiz(save.id)}>delete</Button>
 			{/if}
 		</footer>
 	</section>
