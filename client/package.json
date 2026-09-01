@@ -2,6 +2,7 @@
 	"name": "quizpub-client",
 	"version": "3.0.0",
 	"private": true,
+	"packageManager": "pnpm@10.34.5",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -44,5 +45,15 @@
 		"@xstate/svelte": "2.0.1",
 		"svelte-local-storage-store": "0.4.0",
 		"xstate": "4.37.2"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@sveltejs/kit",
+			"esbuild"
+		],
+		"ignoredBuiltDependencies": [
+			"cypress",
+			"svelte-preprocess"
+		]
 	}
 }

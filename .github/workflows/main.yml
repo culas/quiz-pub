@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Test and Build
 on: [push]
 
 jobs:
@@ -19,10 +19,10 @@ jobs:
           node-version: 20
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         id: pnpm-install
         with:
-          version: 8
+          version: 10.34.5
 
       - name: Setup Deno
         uses: denoland/setup-deno@v1
@@ -42,16 +42,3 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
         working-directory: ./client
-
-      - name: Copy to dist folder
-        run: |
-          mkdir -p dist/client
-          cp -r server/* dist/
-          cp -r client/build/* dist/client/
-
-      - name: Upload to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: "q-p"
-          entrypoint: "./server.ts"
-          root: "dist"
