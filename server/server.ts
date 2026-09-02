@@ -3,6 +3,10 @@ import { serve } from "serve";
 import { serveFile } from "serveFile";
 import { QuizSession } from "./QuizSession.ts";
 
+console.log("starting server");
+const appDistDir = parse(Deno.args).dist || "client";
+console.log(Deno.cwd(), ',', appDistDir);
+
 const sessions: Map<string, QuizSession> = new Map();
 
 const announcementChannel = new BroadcastChannel("announcement");
@@ -78,4 +82,4 @@ async function reqHandler(req: Request) {
   return serveFile(req, `${Deno.cwd()}/${appDistDir}/index.html`);
 }
 
-serve(reqHandler, { port: 42069 });
+Deno.serve(reqHandler, { port: 42069 });
